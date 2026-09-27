@@ -1,0 +1,126 @@
+﻿# ============================================================
+# ЦУТ Improvement Auto
+# Git ignore rules
+# ============================================================
+
+# ----------------------------
+# Python
+# ----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ----------------------------
+# Virtual environments
+# ----------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# ----------------------------
+# Secrets and environment files
+# NEVER commit real secrets
+# ----------------------------
+.env
+.env.*
+!.env.example
+
+# ----------------------------
+# Local databases
+# ----------------------------
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+
+# ----------------------------
+# Runtime data / client files
+# ----------------------------
+data/
+storage/
+uploads/
+media/
+
+# ----------------------------
+# Logs
+# ----------------------------
+logs/
+*.log
+
+# ----------------------------
+# Tests / coverage / linters
+# ----------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pyright/
+.tox/
+.nox/
+
+# ----------------------------
+# VS Code / IDE
+# ----------------------------
+.vscode/
+.idea/
+
+# ----------------------------
+# Windows / macOS
+# ----------------------------
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ----------------------------
+# Frontend / Node.js
+# ----------------------------
+node_modules/
+.next/
+.nuxt/
+.npm/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ----------------------------
+# Temporary files
+# ----------------------------
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~$*
