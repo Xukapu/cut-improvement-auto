@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel
 
+from app.api.v1.router import api_router
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -26,6 +27,8 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=settings.allowed_hosts,
 )
+
+app.include_router(api_router)
 
 
 @app.get(

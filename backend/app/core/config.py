@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     db_user: str = "cut_app"
     db_password: SecretStr
 
+    session_cookie_name: str = "cut_session"
+    session_ttl_hours: int = Field(default=12, ge=1, le=720)
+
+    login_max_attempts: int = Field(default=5, ge=1, le=20)
+    login_lock_minutes: int = Field(default=15, ge=1, le=1440)
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -43,6 +49,10 @@ class Settings(BaseSettings):
     @property
     def docs_enabled(self) -> bool:
         return not self.is_production
+
+    @property
+    def session_cookie_secure(self) -> bool:
+        return self.is_production
 
 
 @lru_cache

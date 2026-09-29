@@ -1,6 +1,17 @@
+from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import Boolean, CheckConstraint, Index, String, true
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    Index,
+    Integer,
+    String,
+    func,
+    text,
+    true,
+)
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,6 +34,14 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         CheckConstraint(
             "role IN ('owner', 'admin', 'mechanic', 'tech_admin')",
             name="role_valid",
+        ),
+        CheckConstraint(
+            "failed_login_attempts >= 0",
+            name="failed_login_attempts_non_negative",
+        ),
+        CheckConstraint(
+            "login = lower(login)",
+            name="login_lowercase",
         ),
         Index("ix_app_users_role", "role"),
     )
@@ -61,4 +80,27 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
         default=True,
         server_default=true(),
+    )
+
+    failed_login_attempts: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default=text("0"),
+    )
+
+    locked_until: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    last_login_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    password_changed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     )
