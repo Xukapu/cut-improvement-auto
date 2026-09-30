@@ -114,6 +114,28 @@ def update_client(
     return result
 
 
+def set_client_internal_mark(
+    db: Session,
+    *,
+    client: Client,
+    internal_mark: bool,
+) -> Client:
+    client.internal_mark = internal_mark
+
+    db.commit()
+    db.refresh(client)
+
+    result = get_client_by_id(
+        db,
+        client.id,
+    )
+
+    if result is None:
+        raise RuntimeError("Клиент не найден после изменения метки.")
+
+    return result
+
+
 def archive_client(
     db: Session,
     *,

@@ -1,12 +1,20 @@
 from datetime import datetime
 from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from app.models.client import ArchiveReason, ClientSource
 
 
 class ClientWrite(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     full_name: str = Field(min_length=2, max_length=200)
     phone_primary: str = Field(min_length=5, max_length=32)
     phone_secondary: str | None = Field(default=None, max_length=32)
@@ -18,7 +26,6 @@ class ClientWrite(BaseModel):
         ge=1,
     )
 
-    internal_mark: bool = False
     notes: str | None = Field(default=None, max_length=2000)
 
     @field_validator(
@@ -64,11 +71,15 @@ class ClientWrite(BaseModel):
 
 
 class ClientCreate(ClientWrite):
-    pass
+    internal_mark: bool = False
 
 
 class ClientUpdate(ClientWrite):
     pass
+
+
+class ClientInternalMarkUpdate(BaseModel):
+    internal_mark: bool
 
 
 class ClientResponse(BaseModel):

@@ -1,7 +1,51 @@
 import pytest
 from app.models.client import ArchiveReason, ClientSource
-from app.schemas.client import ArchiveClientRequest, ClientCreate
+from app.schemas.client import (
+    ArchiveClientRequest,
+    ClientCreate,
+    ClientInternalMarkUpdate,
+    ClientUpdate,
+)
 from pydantic import ValidationError
+
+
+def test_internal_mark_defaults_to_false() -> None:
+    client = ClientCreate(
+        full_name="Иван Иванов",
+        phone_primary="+79990000000",
+        source=ClientSource.OTHER,
+    )
+
+    assert client.internal_mark is False
+
+
+def test_owner_can_choose_internal_mark_on_create() -> None:
+    client = ClientCreate(
+        full_name="Иван Иванов",
+        phone_primary="+79990000000",
+        source=ClientSource.OTHER,
+        internal_mark=True,
+    )
+
+    assert client.internal_mark is True
+
+
+def test_regular_client_update_cannot_change_internal_mark() -> None:
+    with pytest.raises(ValidationError):
+        ClientUpdate(
+            full_name="Иван Иванов",
+            phone_primary="+79990000000",
+            source=ClientSource.OTHER,
+            internal_mark=True,
+        )
+
+
+def test_internal_mark_update_schema() -> None:
+    payload = ClientInternalMarkUpdate(
+        internal_mark=True,
+    )
+
+    assert payload.internal_mark is True
 
 
 def test_referral_requires_referrer_number() -> None:
@@ -36,16 +80,6 @@ def test_client_text_fields_are_trimmed() -> None:
     assert client.phone_primary == "+79990000000"
     assert client.phone_secondary is None
     assert client.notes == "заметка"
-
-
-def test_internal_mark_defaults_to_false() -> None:
-    client = ClientCreate(
-        full_name="Иван Иванов",
-        phone_primary="+79990000000",
-        source=ClientSource.OTHER,
-    )
-
-    assert client.internal_mark is False
 
 
 def test_referrer_number_must_be_positive() -> None:

@@ -5,9 +5,11 @@ from fastapi import APIRouter, HTTPException, Path, Query, status
 from app.api.deps import (
     DbSession,
     ManagerUser,
+    OwnerOnly,
     OwnerOrTechAdmin,
     StaffUser,
 )
+from app.models.user import UserRole
 from app.repositories.client import (
     get_archived_client_by_number,
     get_client_by_number,
@@ -19,6 +21,7 @@ from app.schemas.client import (
     ArchivedClientListResponse,
     ArchivedClientResponse,
     ClientCreate,
+    ClientInternalMarkUpdate,
     ClientListResponse,
     ClientResponse,
     ClientUpdate,
@@ -27,6 +30,7 @@ from app.services.client import (
     archive_client,
     create_client,
     restore_client,
+    set_client_internal_mark,
     update_client,
 )
 
@@ -189,8 +193,14 @@ def get_client(
 def add_client(
     payload: ClientCreate,
     db: DbSession,
-    _current_user: ManagerUser,
+    current_user: ManagerUser,
 ) -> ClientResponse:
+    if payload.internal_mark and current_user.role != UserRole.OWNER:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=("Внутреннюю метку клиента может устанавливать только владелец."),
+        )
+
     client = create_client(
         db,
         payload,
@@ -225,6 +235,37 @@ def edit_client(
         db,
         client=client,
         payload=payload,
+    )
+
+    return ClientResponse.model_validate(updated)
+
+
+@router.patch(
+    "/{client_number}/internal-mark",
+    response_model=ClientResponse,
+    summary="Поставить или снять внутреннюю метку клиента",
+)
+def edit_client_internal_mark(
+    client_number: ClientNumber,
+    payload: ClientInternalMarkUpdate,
+    db: DbSession,
+    _current_user: OwnerOnly,
+) -> ClientResponse:
+    client = get_client_by_number(
+        db,
+        client_number,
+    )
+
+    if client is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Клиент не найден.",
+        )
+
+    updated = set_client_internal_mark(
+        db,
+        client=client,
+        internal_mark=payload.internal_mark,
     )
 
     return ClientResponse.model_validate(updated)
