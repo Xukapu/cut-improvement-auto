@@ -39,3 +39,8 @@ __all__ = [
     "WorkOrder",
     "WorkOrderStatus",
 ]
+from app.models.notification import (  # noqa: F401
+    ClientNotificationPreference,
+    CustomerNotification,
+    ServiceReminder,
+)

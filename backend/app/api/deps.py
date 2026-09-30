@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 import app.db.audit_hooks  # noqa: F401
+import app.db.notification_hooks  # noqa: F401
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.user import User, UserRole

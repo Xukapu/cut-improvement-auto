@@ -1,9 +1,15 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
+from app.services.notification_scheduler import (
+    start_notification_scheduler,
+    stop_notification_scheduler,
+)
 
 settings = get_settings()
 
@@ -14,7 +20,18 @@ class HealthResponse(BaseModel):
     version: str
 
 
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await start_notification_scheduler()
+
+    try:
+        yield
+    finally:
+        await stop_notification_scheduler()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title=settings.app_name,
     version=settings.app_version,
     debug=settings.debug,
