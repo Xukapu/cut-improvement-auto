@@ -37,6 +37,46 @@ def test_client_source_has_one_check_constraint() -> None:
     assert len(checks) == 1
 
 
+def test_client_number_uses_database_identity() -> None:
+    column = Base.metadata.tables["clients"].c.client_number
+
+    assert column.identity is not None
+    assert column.unique is True
+
+
+def test_vehicle_number_uses_database_identity() -> None:
+    column = Base.metadata.tables["vehicles"].c.vehicle_number
+
+    assert column.identity is not None
+    assert column.unique is True
+
+
+def test_client_has_archive_state_constraint() -> None:
+    table = Base.metadata.tables["clients"]
+
+    checks = [
+        constraint
+        for constraint in table.constraints
+        if isinstance(constraint, CheckConstraint)
+        and constraint.name == "ck_clients_archive_state_consistent"
+    ]
+
+    assert len(checks) == 1
+
+
+def test_vehicle_ownership_state_is_validated() -> None:
+    table = Base.metadata.tables["client_vehicles"]
+
+    checks = [
+        constraint
+        for constraint in table.constraints
+        if isinstance(constraint, CheckConstraint)
+        and constraint.name == "ck_client_vehicles_ownership_state_valid"
+    ]
+
+    assert len(checks) == 1
+
+
 def test_user_login_is_forced_to_lowercase() -> None:
     table = Base.metadata.tables["app_users"]
 

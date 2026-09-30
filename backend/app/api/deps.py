@@ -46,8 +46,6 @@ def ensure_user_has_role(
     user: User,
     allowed_roles: frozenset[UserRole],
 ) -> User:
-    """Проверяет, разрешена ли роль пользователя."""
-
     if user.role not in allowed_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -60,8 +58,6 @@ def ensure_user_has_role(
 def require_roles(
     *allowed_roles: UserRole,
 ) -> Callable[[User], User]:
-    """Создаёт FastAPI-зависимость для проверки ролей."""
-
     roles = frozenset(allowed_roles)
 
     if not roles:
@@ -93,6 +89,17 @@ OwnerOrTechAdmin = Annotated[
         require_roles(
             UserRole.OWNER,
             UserRole.TECH_ADMIN,
+        )
+    ),
+]
+
+ManagerUser = Annotated[
+    User,
+    Depends(
+        require_roles(
+            UserRole.OWNER,
+            UserRole.TECH_ADMIN,
+            UserRole.ADMIN,
         )
     ),
 ]
