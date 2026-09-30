@@ -1,4 +1,5 @@
 from app.models.appointment import Appointment, AppointmentStatus
+from app.models.audit import AuditLog
 from app.models.client import ArchiveReason, Client, ClientSource
 from app.models.client_vehicle import ClientVehicle
 from app.models.dispute import DisputePhoto, DisputeRecord
@@ -13,6 +14,7 @@ from app.models.work_item import WorkItem, WorkItemAssignment
 from app.models.work_order import WorkOrder, WorkOrderStatus
 
 __all__ = [
+    "AuditLog",
     "Payment",
     "PaymentMethod",
     "DisputePhoto",

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.appointments import router as appointments_router
+from app.api.v1.audit import router as audit_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.clients import router as clients_router
 from app.api.v1.disputes import router as disputes_router
@@ -31,3 +32,4 @@ api_router.include_router(recommended_works_router)
 
 api_router.include_router(disputes_router)
 api_router.include_router(payments_router)
+api_router.include_router(audit_router)

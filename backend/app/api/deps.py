@@ -4,9 +4,11 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
+import app.db.audit_hooks  # noqa: F401
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.user import User, UserRole
+from app.services.audit import set_audit_actor
 from app.services.auth import get_user_by_session_token
 
 settings = get_settings()
@@ -28,7 +30,10 @@ def get_current_user(
             detail="Требуется авторизация.",
         )
 
-    user = get_user_by_session_token(db, token)
+    user = get_user_by_session_token(
+        db,
+        token,
+    )
 
     if user is None:
         raise HTTPException(
@@ -36,10 +41,18 @@ def get_current_user(
             detail="Сессия недействительна или завершена.",
         )
 
+    set_audit_actor(
+        db,
+        user,
+    )
+
     return user
 
 
-CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentUser = Annotated[
+    User,
+    Depends(get_current_user),
+]
 
 
 def ensure_user_has_role(
