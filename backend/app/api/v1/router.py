@@ -6,6 +6,7 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.clients import router as clients_router
 from app.api.v1.dashboard import router as dashboard_router
 from app.api.v1.disputes import router as disputes_router
+from app.api.v1.documents import router as documents_router
 from app.api.v1.employees import router as employees_router
 from app.api.v1.history import router as history_router
 from app.api.v1.parts import router as parts_router
@@ -37,3 +38,4 @@ api_router.include_router(payments_router)
 api_router.include_router(audit_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(reports_router)
+api_router.include_router(documents_router)
