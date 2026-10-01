@@ -1,10 +1,12 @@
 from datetime import datetime
 from enum import StrEnum
+from uuid import UUID
 
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    ForeignKey,
     Index,
     Integer,
     String,
@@ -44,11 +46,40 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             name="login_lowercase",
         ),
         Index("ix_app_users_role", "role"),
+        Index("ix_app_users_phone", "phone"),
+        Index(
+            "uq_app_users_employee_id",
+            "employee_id",
+            unique=True,
+        ),
     )
 
     full_name: Mapped[str] = mapped_column(
         String(200),
         nullable=False,
+    )
+
+    first_name: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    last_name: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    phone: Mapped[str | None] = mapped_column(
+        String(32),
+        nullable=True,
+    )
+
+    employee_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey(
+            "employees.id",
+            ondelete="RESTRICT",
+        ),
+        nullable=True,
     )
 
     login: Mapped[str] = mapped_column(
@@ -69,7 +100,10 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             native_enum=False,
             create_constraint=False,
             validate_strings=True,
-            values_callable=lambda enum_type: [item.value for item in enum_type],
+            values_callable=lambda enum_type: [
+                item.value
+                for item in enum_type
+            ],
             length=32,
         ),
         nullable=False,

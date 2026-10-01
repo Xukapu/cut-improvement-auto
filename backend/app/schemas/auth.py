@@ -7,22 +7,37 @@ from app.models.user import UserRole
 
 
 class LoginRequest(BaseModel):
-    login: str = Field(min_length=3, max_length=100)
-    password: str = Field(min_length=1, max_length=128)
+    login: str = Field(
+        min_length=3,
+        max_length=100,
+    )
+    password: str = Field(
+        min_length=1,
+        max_length=128,
+    )
 
     @field_validator("login")
     @classmethod
-    def validate_login(cls, value: str) -> str:
+    def validate_login(
+        cls,
+        value: str,
+    ) -> str:
         return normalize_login(value)
 
 
 class CurrentUserResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
     id: UUID
     full_name: str
+    first_name: str | None = None
+    last_name: str | None = None
+    phone: str | None = None
     login: str
     role: UserRole
+    is_active: bool = True
 
 
 class MessageResponse(BaseModel):

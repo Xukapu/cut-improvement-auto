@@ -6,6 +6,7 @@ import {
   FileText,
   LogOut,
   Search,
+  Settings as SettingsIcon,
   Users,
   Wrench,
 } from "lucide-react";
@@ -14,7 +15,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { FormEvent } from "react";
+import type {
+  FormEvent,
+} from "react";
 
 import {
   getCurrentUser,
@@ -28,7 +31,15 @@ import {
 import {
   getDashboard,
 } from "./api/dashboard";
-import { DashboardAppointmentsCard } from "./components/DashboardAppointmentsCard";
+import {
+  DashboardAppointmentsCard,
+} from "./components/DashboardAppointmentsCard";
+import {
+  DashboardAttentionCard,
+} from "./components/DashboardAttentionCard";
+import {
+  DashboardVehicleStateCard,
+} from "./components/DashboardVehicleStateCard";
 import {
   AppointmentsPage,
 } from "./pages/AppointmentsPage";
@@ -36,10 +47,11 @@ import {
   ClientsPage,
 } from "./pages/ClientsPage";
 import {
+  SettingsPage,
+} from "./pages/SettingsPage";
+import {
   VehiclesPage,
 } from "./pages/VehiclesPage";
-import { DashboardAttentionCard } from "./components/DashboardAttentionCard";
-import { DashboardVehicleStateCard } from "./components/DashboardVehicleStateCard";
 import "./styles/app.css";
 import type {
   CurrentUser,
@@ -58,10 +70,12 @@ import {
   userInitials,
 } from "./utils/format";
 
+
 type AuthState =
   | "checking"
   | "anonymous"
   | "authenticated";
+
 
 type Section =
   | "dashboard"
@@ -70,7 +84,9 @@ type Section =
   | "appointments"
   | "workorders"
   | "notifications"
-  | "reports";
+  | "reports"
+  | "settings";
+
 
 const sectionTitles: Record<
   Section,
@@ -83,7 +99,9 @@ const sectionTitles: Record<
   workorders: "Заказ-наряды",
   notifications: "Уведомления",
   reports: "Отчёты",
+  settings: "Настройки",
 };
+
 
 function App() {
   const [
@@ -94,17 +112,23 @@ function App() {
   const [
     currentUser,
     setCurrentUser,
-  ] = useState<CurrentUser | null>(null);
+  ] = useState<CurrentUser | null>(
+    null,
+  );
 
   const [
     section,
     setSection,
-  ] = useState<Section>("dashboard");
+  ] = useState<Section>(
+    "dashboard",
+  );
 
   const [
     dashboard,
     setDashboard,
-  ] = useState<DashboardResponse | null>(null);
+  ] = useState<DashboardResponse | null>(
+    null,
+  );
 
   const [
     dashboardLoading,
@@ -145,6 +169,7 @@ function App() {
 
   const reportDate = todayIso();
 
+
   const loadDashboard =
     useCallback(async () => {
       setDashboardLoading(true);
@@ -168,6 +193,7 @@ function App() {
       }
     }, [reportDate]);
 
+
   useEffect(() => {
     apiRequest<HealthResponse>(
       "/health",
@@ -180,11 +206,14 @@ function App() {
       });
   }, []);
 
+
   useEffect(() => {
     getCurrentUser()
       .then((user) => {
         setCurrentUser(user);
-        setAuthState("authenticated");
+        setAuthState(
+          "authenticated",
+        );
       })
       .catch((error) => {
         if (
@@ -199,6 +228,7 @@ function App() {
         setAuthState("anonymous");
       });
   }, []);
+
 
   useEffect(() => {
     if (
@@ -242,6 +272,7 @@ function App() {
     reportDate,
   ]);
 
+
   async function handleLogin(
     event: FormEvent,
   ) {
@@ -252,12 +283,15 @@ function App() {
 
     try {
       const user = await login({
-        login: loginValue.trim(),
+        login:
+          loginValue.trim(),
         password,
       });
 
       setCurrentUser(user);
-      setAuthState("authenticated");
+      setAuthState(
+        "authenticated",
+      );
       setPassword("");
       setBackendStatus("online");
     } catch (error) {
@@ -271,7 +305,9 @@ function App() {
       } else if (
         error instanceof ApiError
       ) {
-        setLoginError(error.message);
+        setLoginError(
+          error.message,
+        );
       } else {
         setLoginError(
           "Не удалось выполнить вход.",
@@ -281,6 +317,7 @@ function App() {
       setLoginLoading(false);
     }
   }
+
 
   async function handleLogout() {
     try {
@@ -293,6 +330,7 @@ function App() {
     }
   }
 
+
   function navClass(
     target: Section,
   ): string {
@@ -300,6 +338,7 @@ function App() {
       ? "nav-item nav-item-active"
       : "nav-item";
   }
+
 
   if (
     authState === "checking"
@@ -322,6 +361,7 @@ function App() {
       </main>
     );
   }
+
 
   if (
     authState === "anonymous"
@@ -387,8 +427,8 @@ function App() {
               </span>
 
               <input
-                type="password"
                 autoComplete="current-password"
+                type="password"
                 value={password}
                 onChange={(event) => {
                   setPassword(
@@ -447,6 +487,7 @@ function App() {
     );
   }
 
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -466,13 +507,16 @@ function App() {
           </div>
         </div>
 
+
         <nav className="sidebar-nav">
           <button
             className={navClass(
               "dashboard",
             )}
             onClick={() => {
-              setSection("dashboard");
+              setSection(
+                "dashboard",
+              );
             }}
             type="button"
           >
@@ -569,6 +613,7 @@ function App() {
           </button>
         </nav>
 
+
         <div className="sidebar-footer">
           <div
             className={
@@ -594,6 +639,7 @@ function App() {
         </div>
       </aside>
 
+
       <main className="main-content">
         <header className="topbar">
           <div>
@@ -612,6 +658,7 @@ function App() {
             </h1>
           </div>
 
+
           <div className="topbar-actions">
             <button
               className="search-button"
@@ -620,6 +667,7 @@ function App() {
               <Search size={18} />
               Поиск
             </button>
+
 
             <div className="user-menu">
               <div className="user-chip">
@@ -631,7 +679,10 @@ function App() {
 
               <div className="user-info">
                 <strong>
-                  {currentUser?.login}
+                  {currentUser
+                    ?.full_name ||
+                    currentUser
+                      ?.login}
                 </strong>
 
                 <span>
@@ -641,6 +692,27 @@ function App() {
                   )}
                 </span>
               </div>
+
+              <button
+                aria-label="Настройки"
+                className={
+                  section ===
+                  "settings"
+                    ? "settings-top-button settings-top-button-active"
+                    : "settings-top-button"
+                }
+                onClick={() => {
+                  setSection(
+                    "settings",
+                  );
+                }}
+                title="Настройки"
+                type="button"
+              >
+                <SettingsIcon
+                  size={18}
+                />
+              </button>
 
               <button
                 aria-label="Выйти"
@@ -657,20 +729,22 @@ function App() {
           </div>
         </header>
 
-        {section === "dashboard" && (
+
+        {section ===
+          "dashboard" && (
           <>
-                        <DashboardAttentionCard
+            <DashboardAttentionCard
               dashboard={dashboard}
-              loading={dashboardLoading}
+              loading={
+                dashboardLoading
+              }
               onRefresh={() => {
                 void loadDashboard();
               }}
             />
 
             {dashboardError && (
-              <div className=
-                "dashboard-error"
-              >
+              <div className="dashboard-error">
                 {dashboardError}
               </div>
             )}
@@ -750,18 +824,21 @@ function App() {
             </section>
 
             <section className="workspace-grid">
-                            <DashboardAppointmentsCard
+              <DashboardAppointmentsCard
                 onOpenAppointments={() => {
-                  setSection("appointments");
+                  setSection(
+                    "appointments",
+                  );
                 }}
               />
 
-                            <DashboardVehicleStateCard
+              <DashboardVehicleStateCard
                 dashboard={dashboard}
               />
             </section>
           </>
         )}
+
 
         {section === "clients" &&
           currentUser && (
@@ -772,20 +849,39 @@ function App() {
             />
           )}
 
-        {section === "vehicles" && (
+
+        {section ===
+          "vehicles" && (
           <VehiclesPage />
         )}
+
 
         {section ===
           "appointments" && (
           <AppointmentsPage />
         )}
 
+
+        {section ===
+          "settings" &&
+          currentUser && (
+            <SettingsPage
+              currentUser={
+                currentUser
+              }
+              onUserChanged={
+                setCurrentUser
+              }
+            />
+          )}
+
+
         {(section ===
           "workorders" ||
           section ===
             "notifications" ||
-          section === "reports") && (
+          section ===
+            "reports") && (
           <section className="placeholder-page">
             <Wrench size={36} />
 
@@ -805,5 +901,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
