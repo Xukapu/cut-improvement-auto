@@ -46,6 +46,7 @@ import {
 import {
   ClientsPage,
 } from "./pages/ClientsPage";
+import { NotificationsPage } from "./pages/NotificationsPage";
 import {
   SettingsPage,
 } from "./pages/SettingsPage";
@@ -965,6 +966,16 @@ function App() {
 
 
         {section ===
+          "notifications" &&
+          currentUser && (
+          <NotificationsPage
+            currentUser={
+              currentUser
+            }
+          />
+        )}
+
+        {section ===
           "settings" &&
           currentUser && (
           <SettingsPage
@@ -978,10 +989,8 @@ function App() {
         )}
 
 
-        {(section ===
-          "notifications" ||
-          section ===
-            "reports") && (
+        {section ===
+          "reports" && (
           <section className="placeholder-page">
             <Wrench size={36} />
 

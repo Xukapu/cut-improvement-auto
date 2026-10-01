@@ -4696,3 +4696,1118 @@ button {
 
 
 /* WORK ORDER PRINT AND LARGE STATUS 2026 END */
+
+/* REAL NOTIFICATIONS FRONTEND 2026 START */
+
+.notifications-page {
+  display: grid;
+  gap: 12px;
+}
+
+.notifications-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  padding: 13px 14px;
+
+  border: 1px solid #dce2e6;
+  border-radius: 11px;
+
+  background: #f7f9fa;
+}
+
+.notifications-info > svg {
+  flex-shrink: 0;
+
+  margin-top: 1px;
+
+  color: #536b7b;
+}
+
+.notifications-info > div {
+  display: grid;
+  gap: 3px;
+}
+
+.notifications-info strong {
+  font-size: 12px;
+}
+
+.notifications-info span {
+  color: #737e87;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.notifications-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+
+  padding: 7px;
+
+  border: 1px solid #dfe4e7;
+  border-radius: 11px;
+
+  background: #ffffff;
+}
+
+.notifications-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 38px;
+
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #6b7680;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.notifications-tab:hover {
+  background: #f3f5f6;
+}
+
+.notifications-tab-active {
+  border-color: #d7dde1;
+
+  background: #edf1f3;
+  color: #25333d;
+}
+
+.notifications-error,
+.notifications-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  font-size: 10px;
+}
+
+.notifications-error {
+  border: 1px solid #efd5d5;
+
+  background: #fff5f5;
+  color: #994848;
+}
+
+.notifications-success {
+  border: 1px solid #d4e6d8;
+
+  background: #f2f8f3;
+  color: #477454;
+}
+
+.notifications-panel {
+  display: grid;
+  gap: 12px;
+
+  padding: 14px;
+
+  border: 1px solid #dfe4e7;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.notifications-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notifications-panel-heading > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.notifications-panel-heading span {
+  color: #8a939a;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notifications-panel-heading h2 {
+  margin: 0;
+
+  font-size: 17px;
+}
+
+.notifications-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.notifications-secondary-button,
+.notifications-danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding: 0 10px;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.notifications-secondary-button {
+  border: 1px solid #d7dde1;
+
+  color: #52616c;
+}
+
+.notifications-danger-button {
+  border: 1px solid #ead2d2;
+
+  color: #9a4949;
+}
+
+.notifications-primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notifications-summary {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+  gap: 7px;
+}
+
+.notifications-summary > div {
+  display: grid;
+  gap: 3px;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  background: #f5f7f8;
+}
+
+.notifications-summary span {
+  color: #828c94;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notifications-summary strong {
+  font-size: 17px;
+}
+
+.notifications-filters {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  gap: 8px;
+
+  padding: 9px;
+
+  border-radius: 9px;
+
+  background: #f7f8f9;
+}
+
+.notifications-reminder-filter {
+  grid-template-columns:
+    minmax(
+      180px,
+      280px
+    );
+}
+
+.notifications-filters label,
+.notification-client-selector label,
+.notification-form-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.notifications-filters label > span,
+.notification-client-selector label > span,
+.notification-form-grid label > span {
+  color: #67737c;
+
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.notifications-filters select,
+.notification-client-selector select,
+.notification-form-grid input,
+.notification-form-grid select,
+.notification-form-grid textarea {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  padding: 8px 9px;
+
+  border: 1px solid #d7dde1;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #1e272e;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+.notification-form-grid textarea {
+  resize: vertical;
+}
+
+.notifications-empty {
+  padding: 28px;
+
+  color: #879098;
+
+  font-size: 10px;
+  text-align: center;
+}
+
+.notifications-list,
+.reminder-list {
+  display: grid;
+  gap: 7px;
+}
+
+.notification-card,
+.reminder-card {
+  display: grid;
+  gap: 8px;
+
+  padding: 11px;
+
+  border: 1px solid #e3e7e9;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.notification-card-top,
+.reminder-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.notification-card-top > div,
+.reminder-card-top > div {
+  display: grid;
+  gap: 2px;
+}
+
+.notification-card-top strong,
+.reminder-card-top strong {
+  font-size: 11px;
+}
+
+.notification-card-top > div > span,
+.reminder-card-top > div > span {
+  color: #7f8991;
+
+  font-size: 9px;
+}
+
+.notification-status,
+.reminder-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 26px;
+
+  padding: 0 9px;
+
+  border-radius: 7px;
+
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.notification-status-prepared,
+.reminder-status-planned {
+  background: #eef3f7;
+  color: #52718a;
+}
+
+.notification-status-sent,
+.reminder-status-completed {
+  background: #edf6ef;
+  color: #4d7959;
+}
+
+.notification-status-failed {
+  background: #fff0f0;
+  color: #9b4545;
+}
+
+.notification-status-cancelled,
+.reminder-status-cancelled {
+  background: #eeeeef;
+  color: #727980;
+}
+
+.notification-message,
+.reminder-card > p {
+  margin: 0;
+
+  color: #4f5b64;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.notification-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  color: #78838b;
+
+  font-size: 9px;
+}
+
+.notification-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.notification-error-text {
+  padding: 7px 8px;
+
+  border-radius: 7px;
+
+  background: #fff4f4;
+  color: #994a4a;
+
+  font-size: 9px;
+}
+
+.reminder-vehicle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #5e6a73;
+
+  font-size: 10px;
+}
+
+.reminder-vehicle > span {
+  margin-left: 4px;
+
+  color: #8a939b;
+}
+
+.reminder-due {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  gap: 6px;
+}
+
+.reminder-due > div {
+  display: grid;
+  gap: 2px;
+
+  padding: 7px 8px;
+
+  border-radius: 7px;
+
+  background: #f5f7f8;
+}
+
+.reminder-due span {
+  color: #869098;
+
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.reminder-due strong {
+  font-size: 10px;
+}
+
+.reminder-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  padding-top: 3px;
+}
+
+.notification-client-selector {
+  max-width: 520px;
+}
+
+.notification-preferences {
+  display: grid;
+  gap: 10px;
+}
+
+.notification-preference-client {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  gap: 7px;
+}
+
+.notification-preference-client > div {
+  display: grid;
+  gap: 2px;
+
+  padding: 9px 10px;
+
+  border-radius: 8px;
+
+  background: #f5f7f8;
+}
+
+.notification-preference-client span {
+  color: #879198;
+
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.notification-preference-client strong {
+  font-size: 10px;
+}
+
+.notification-preference-group {
+  display: grid;
+  gap: 7px;
+
+  padding: 11px;
+
+  border: 1px solid #e2e6e8;
+  border-radius: 9px;
+}
+
+.notification-preference-heading {
+  display: grid;
+  gap: 2px;
+
+  padding-bottom: 5px;
+}
+
+.notification-preference-heading strong {
+  font-size: 11px;
+}
+
+.notification-preference-heading span {
+  color: #828c94;
+
+  font-size: 9px;
+}
+
+.notification-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  padding: 8px;
+
+  border-radius: 7px;
+
+  background: #f7f8f9;
+
+  cursor: pointer;
+}
+
+.notification-toggle input {
+  width: 16px;
+  height: 16px;
+
+  margin-top: 1px;
+}
+
+.notification-toggle > div {
+  display: grid;
+  gap: 2px;
+}
+
+.notification-toggle strong {
+  font-size: 10px;
+}
+
+.notification-toggle span {
+  color: #818b93;
+
+  font-size: 9px;
+}
+
+.notification-preference-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notification-modal-backdrop {
+  position: fixed;
+  z-index: 2500;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgb(13 19 24 / 45%);
+}
+
+.notification-modal {
+  display: grid;
+  gap: 13px;
+
+  width: min(
+    650px,
+    100%
+  );
+
+  max-height:
+    calc(
+      100vh - 40px
+    );
+
+  overflow: auto;
+
+  padding: 16px;
+
+  border: 1px solid #d7dde1;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 20px 65px
+    rgb(0 0 0 / 20%);
+}
+
+.notification-modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notification-modal-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.notification-modal-heading span {
+  color: #889198;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notification-modal-heading h2 {
+  margin: 0;
+
+  font-size: 17px;
+}
+
+.notification-icon-button {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 1px solid #dce1e4;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #69747d;
+
+  cursor: pointer;
+}
+
+.notification-form-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  gap: 9px;
+}
+
+.notification-wide {
+  grid-column:
+    1 / -1;
+}
+
+.notification-modal-note {
+  padding: 8px 9px;
+
+  border-radius: 7px;
+
+  background: #f5f7f8;
+  color: #78838b;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.notification-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+
+@media (max-width: 800px) {
+  .notifications-summary,
+  .notifications-filters,
+  .notification-preference-client {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .notifications-panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+
+@media (max-width: 560px) {
+  .notifications-summary,
+  .notifications-filters,
+  .notification-form-grid,
+  .notification-preference-client,
+  .reminder-due {
+    grid-template-columns:
+      1fr;
+  }
+
+  .notification-wide {
+    grid-column: auto;
+  }
+}
+
+
+/* REAL NOTIFICATIONS FRONTEND 2026 END */
+
+/* NOTIFICATIONS TYPOGRAPHY LARGE 2026 START */
+
+
+/* Верхнее пояснение */
+
+.notifications-info strong {
+  font-size: 15px;
+}
+
+.notifications-info span {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+
+/* Вкладки */
+
+.notifications-tab {
+  min-height: 43px;
+
+  padding: 0 14px;
+
+  font-size: 12px;
+}
+
+.notifications-tab > svg {
+  width: 18px;
+  height: 18px;
+}
+
+
+/* Заголовки разделов */
+
+.notifications-panel-heading span {
+  font-size: 10px;
+}
+
+.notifications-panel-heading h2 {
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+
+/* Кнопки */
+
+.notifications-secondary-button,
+.notifications-danger-button,
+.notifications-primary-button {
+  min-height: 38px;
+
+  font-size: 11px;
+}
+
+
+/* Сводные цифры */
+
+.notifications-summary span {
+  font-size: 10px;
+}
+
+.notifications-summary strong {
+  font-size: 21px;
+}
+
+
+/* Фильтры */
+
+.notifications-filters label > span,
+.notification-client-selector label > span,
+.notification-form-grid label > span {
+  font-size: 11px;
+}
+
+.notifications-filters select,
+.notification-client-selector select,
+.notification-form-grid input,
+.notification-form-grid select,
+.notification-form-grid textarea {
+  min-height: 38px;
+
+  font-size: 12px;
+}
+
+
+/* Пустые состояния */
+
+.notifications-empty {
+  font-size: 12px;
+}
+
+
+/* Карточки уведомлений */
+
+.notification-card,
+.reminder-card {
+  padding: 14px;
+
+  gap: 10px;
+}
+
+.notification-card-top strong,
+.reminder-card-top strong {
+  font-size: 14px;
+}
+
+.notification-card-top > div > span,
+.reminder-card-top > div > span {
+  font-size: 11px;
+}
+
+
+/* Статусы */
+
+.notification-status,
+.reminder-status {
+  min-height: 31px;
+
+  padding: 0 11px;
+
+  font-size: 11px;
+}
+
+
+/* Сам текст сообщения */
+
+.notification-message,
+.reminder-card > p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* Метаданные уведомления */
+
+.notification-meta {
+  gap: 12px;
+
+  font-size: 11px;
+}
+
+.notification-meta svg {
+  width: 15px;
+  height: 15px;
+}
+
+
+/* Ошибка отправки */
+
+.notification-error-text {
+  padding: 9px 10px;
+
+  font-size: 11px;
+}
+
+
+/* Автомобиль в сервисном напоминании */
+
+.reminder-vehicle {
+  font-size: 12px;
+}
+
+.reminder-vehicle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.reminder-vehicle > span {
+  font-size: 11px;
+}
+
+
+/* Дата / пробег */
+
+.reminder-due span {
+  font-size: 10px;
+}
+
+.reminder-due strong {
+  font-size: 12px;
+}
+
+
+/* Настройки клиента */
+
+.notification-preference-client span {
+  font-size: 10px;
+}
+
+.notification-preference-client strong {
+  font-size: 12px;
+}
+
+.notification-preference-heading strong {
+  font-size: 14px;
+}
+
+.notification-preference-heading span {
+  font-size: 11px;
+}
+
+
+/* Переключатели */
+
+.notification-toggle {
+  padding: 11px;
+
+  gap: 11px;
+}
+
+.notification-toggle input {
+  width: 18px;
+  height: 18px;
+}
+
+.notification-toggle strong {
+  font-size: 13px;
+}
+
+.notification-toggle span {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+
+/* Модальное окно создания напоминания */
+
+.notification-modal-heading span {
+  font-size: 10px;
+}
+
+.notification-modal-heading h2 {
+  font-size: 21px;
+}
+
+.notification-modal-note {
+  padding: 10px 11px;
+
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+
+/* Сообщения об успехе / ошибке */
+
+.notifications-error,
+.notifications-success {
+  font-size: 12px;
+}
+
+
+/* NOTIFICATIONS TYPOGRAPHY LARGE 2026 END */
+
+/* NOTIFICATION EDIT DELETE 2026 START */
+
+.notification-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid #edf0f2;
+}
+
+.notification-edit-button,
+.notification-delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 36px;
+
+  padding: 0 11px;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.notification-edit-button {
+  border:
+    1px solid #d2d9de;
+
+  color: #526775;
+}
+
+.notification-edit-button:hover {
+  background: #f2f5f6;
+}
+
+.notification-delete-button {
+  border:
+    1px solid #e8cccc;
+
+  color: #a34848;
+}
+
+.notification-delete-button:hover {
+  background: #fff4f4;
+}
+
+.notification-edit-modal {
+  width: min(
+    620px,
+    100%
+  );
+}
+
+.notification-edit-client {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  gap: 7px;
+}
+
+.notification-edit-client > div {
+  display: grid;
+  gap: 3px;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  background: #f5f7f8;
+}
+
+.notification-edit-client span {
+  color: #838d95;
+
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notification-edit-client strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: 12px;
+}
+
+@media (max-width: 560px) {
+  .notification-card-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .notification-edit-client {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* NOTIFICATION EDIT DELETE 2026 END */
