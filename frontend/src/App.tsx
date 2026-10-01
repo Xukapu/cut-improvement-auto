@@ -47,6 +47,7 @@ import {
   ClientsPage,
 } from "./pages/ClientsPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
+import { ReportsPage } from "./pages/ReportsPage";
 import {
   SettingsPage,
 } from "./pages/SettingsPage";
@@ -976,6 +977,16 @@ function App() {
         )}
 
         {section ===
+          "reports" &&
+          currentUser && (
+          <ReportsPage
+            currentUser={
+              currentUser
+            }
+          />
+        )}
+
+        {section ===
           "settings" &&
           currentUser && (
           <SettingsPage
@@ -989,22 +1000,7 @@ function App() {
         )}
 
 
-        {section ===
-          "reports" && (
-          <section className="placeholder-page">
-            <Wrench size={36} />
 
-            <h2>
-              Раздел уже на очереди
-            </h2>
-
-            <p>
-              Backend уже существует.
-              Интерфейс подключим
-              следующим блоком.
-            </p>
-          </section>
-        )}
       </main>
     </div>
   );

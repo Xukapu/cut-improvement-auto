@@ -26,6 +26,7 @@ router = APIRouter(
     tags=["reports"],
 )
 
+
 OptionalDate = Annotated[
     date | None,
     Query(),
@@ -57,7 +58,7 @@ def client_report(
 )
 def finance_report(
     db: DbSession,
-    _current_user: StaffUser,
+    _current_user: OwnerOnly,
     date_from: OptionalDate = None,
     date_to: OptionalDate = None,
 ) -> FinanceReportResponse:
