@@ -7,6 +7,7 @@ from app.models.employee import Employee, EmployeeRate
 from app.models.part import Part, PartProvidedBy
 from app.models.payment import Payment, PaymentMethod
 from app.models.recommended_work import RecommendedWork
+from app.models.sync import SyncDevice
 from app.models.user import User, UserRole
 from app.models.user_session import UserSession
 from app.models.vehicle import Vehicle
@@ -33,6 +34,7 @@ __all__ = [
     "User",
     "UserRole",
     "UserSession",
+    "SyncDevice",
     "Vehicle",
     "WorkItem",
     "WorkItemAssignment",

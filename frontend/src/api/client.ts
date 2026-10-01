@@ -1,3 +1,10 @@
+import {
+  cacheApiResponse,
+  emitServerState,
+  getCachedApiResponse,
+} from "../offline/offlineStore";
+
+
 export class ApiError extends Error {
   status: number;
   detail: unknown;
@@ -15,45 +22,97 @@ export class ApiError extends Error {
   }
 }
 
-type ApiOptions = RequestInit & {
-  skipJson?: boolean;
-};
+
+type ApiOptions =
+  RequestInit & {
+    skipJson?: boolean;
+    offlineCache?: boolean;
+  };
+
 
 type ValidationIssue = {
   loc?: unknown[];
   msg?: string;
   type?: string;
-  ctx?: Record<string, unknown>;
+
+  ctx?:
+    Record<
+      string,
+      unknown
+    >;
 };
 
-const fieldLabels: Record<string, string> = {
-  full_name: "Имя клиента",
-  phone_primary: "Основной телефон",
-  phone_secondary: "Второй телефон",
-  source: "Источник",
-  referred_by_client_number:
-    "Клиент, который рекомендовал",
-  notes: "Комментарий",
 
-  license_plate: "Госномер",
-  vin: "VIN",
-  brand: "Марка",
-  model: "Модель",
-  year: "Год",
-  mileage: "Пробег",
-  owner_client_number: "Владелец",
+const fieldLabels:
+  Record<
+    string,
+    string
+  > = {
+    full_name:
+      "Имя клиента",
 
-  client_number: "Клиент",
-  vehicle_number: "Автомобиль",
-  appointment_date: "Дата записи",
-  appointment_time: "Время записи",
-  reason: "Причина обращения",
-  comment: "Комментарий",
-  status: "Статус",
-};
+    phone_primary:
+      "Основной телефон",
+
+    phone_secondary:
+      "Второй телефон",
+
+    source:
+      "Источник",
+
+    referred_by_client_number:
+      "Клиент, который рекомендовал",
+
+    notes:
+      "Комментарий",
+
+    license_plate:
+      "Госномер",
+
+    vin:
+      "VIN",
+
+    brand:
+      "Марка",
+
+    model:
+      "Модель",
+
+    year:
+      "Год",
+
+    mileage:
+      "Пробег",
+
+    owner_client_number:
+      "Владелец",
+
+    client_number:
+      "Клиент",
+
+    vehicle_number:
+      "Автомобиль",
+
+    appointment_date:
+      "Дата записи",
+
+    appointment_time:
+      "Время записи",
+
+    reason:
+      "Причина обращения",
+
+    comment:
+      "Комментарий",
+
+    status:
+      "Статус",
+  };
+
 
 function fieldName(
-  issue: ValidationIssue,
+  issue:
+    ValidationIssue,
 ): string {
   const location =
     issue.loc ?? [];
@@ -68,7 +127,8 @@ function fieldName(
       location[index];
 
     if (
-      typeof item === "string" &&
+      typeof item ===
+        "string" &&
       item !== "body" &&
       item !== "query" &&
       item !== "path"
@@ -83,8 +143,10 @@ function fieldName(
   return "Поле";
 }
 
+
 function validationMessage(
-  issue: ValidationIssue,
+  issue:
+    ValidationIssue,
 ): string {
   const field =
     fieldName(issue);
@@ -98,9 +160,12 @@ function validationMessage(
   const context =
     issue.ctx ?? {};
 
+
   if (
     type === "missing" ||
-    type.endsWith("_missing") ||
+    type.endsWith(
+      "_missing",
+    ) ||
     raw.includes(
       "Field required",
     )
@@ -111,8 +176,10 @@ function validationMessage(
     );
   }
 
+
   if (
-    type === "string_too_short"
+    type ===
+    "string_too_short"
   ) {
     const minimum =
       context.min_length;
@@ -122,8 +189,10 @@ function validationMessage(
       : `Поле «${field}» слишком короткое.`;
   }
 
+
   if (
-    type === "string_too_long"
+    type ===
+    "string_too_long"
   ) {
     const maximum =
       context.max_length;
@@ -132,6 +201,7 @@ function validationMessage(
       ? `Поле «${field}» слишком длинное. Максимум ${maximum} символов.`
       : `Поле «${field}» слишком длинное.`;
   }
+
 
   if (
     type === "int_parsing" ||
@@ -143,8 +213,10 @@ function validationMessage(
     );
   }
 
+
   if (
-    type === "date_parsing" ||
+    type ===
+      "date_parsing" ||
     type ===
       "date_from_datetime_parsing"
   ) {
@@ -154,8 +226,10 @@ function validationMessage(
     );
   }
 
+
   if (
-    type === "time_parsing"
+    type ===
+    "time_parsing"
   ) {
     return (
       `В поле «${field}» ` +
@@ -163,15 +237,18 @@ function validationMessage(
     );
   }
 
+
   if (
     type === "enum" ||
-    type === "literal_error"
+    type ===
+      "literal_error"
   ) {
     return (
       `В поле «${field}» ` +
       "выбрано недопустимое значение."
     );
   }
+
 
   if (
     type ===
@@ -183,6 +260,7 @@ function validationMessage(
     );
   }
 
+
   if (
     type ===
     "less_than_equal"
@@ -193,6 +271,7 @@ function validationMessage(
     );
   }
 
+
   if (raw) {
     return (
       `Поле «${field}»: ` +
@@ -200,11 +279,13 @@ function validationMessage(
     );
   }
 
+
   return (
-    `Проверьте поле ` +
+    "Проверьте поле " +
     `«${field}».`
   );
 }
+
 
 function extractErrorMessage(
   status: number,
@@ -212,7 +293,8 @@ function extractErrorMessage(
 ): string {
   if (
     payload &&
-    typeof payload === "object" &&
+    typeof payload ===
+      "object" &&
     "detail" in payload
   ) {
     const detail =
@@ -223,13 +305,16 @@ function extractErrorMessage(
       ).detail;
 
     if (
-      typeof detail === "string"
+      typeof detail ===
+      "string"
     ) {
       return detail;
     }
 
     if (
-      Array.isArray(detail)
+      Array.isArray(
+        detail,
+      )
     ) {
       const messages =
         detail
@@ -257,12 +342,15 @@ function extractErrorMessage(
     }
   }
 
+
   if (
-    typeof payload === "string" &&
+    typeof payload ===
+      "string" &&
     payload.trim()
   ) {
     return payload.trim();
   }
+
 
   if (status === 422) {
     return (
@@ -271,12 +359,14 @@ function extractErrorMessage(
     );
   }
 
+
   if (status === 400) {
     return (
       "Сервер отклонил запрос. " +
       "Проверьте введённые данные."
     );
   }
+
 
   if (status === 401) {
     return (
@@ -285,6 +375,7 @@ function extractErrorMessage(
     );
   }
 
+
   if (status === 403) {
     return (
       "Недостаточно прав " +
@@ -292,9 +383,13 @@ function extractErrorMessage(
     );
   }
 
+
   if (status === 404) {
-    return "Запись не найдена.";
+    return (
+      "Запись не найдена."
+    );
   }
+
 
   if (status === 409) {
     return (
@@ -303,6 +398,7 @@ function extractErrorMessage(
     );
   }
 
+
   if (status >= 500) {
     return (
       "Ошибка сервера. " +
@@ -310,22 +406,89 @@ function extractErrorMessage(
     );
   }
 
-  return `Ошибка HTTP ${status}`;
+
+  return (
+    `Ошибка HTTP ${status}`
+  );
 }
+
+
+function isGetRequest(
+  method:
+    string | undefined,
+): boolean {
+  return (
+    (
+      method ??
+      "GET"
+    ).toUpperCase() ===
+    "GET"
+  );
+}
+
+
+async function cachedFallback<T>(
+  path: string,
+): Promise<
+  | {
+      found: true;
+      value: T;
+    }
+  | {
+      found: false;
+    }
+> {
+  const cached =
+    await getCachedApiResponse<T>(
+      path,
+    );
+
+  if (!cached.found) {
+    return {
+      found: false,
+    };
+  }
+
+  return {
+    found: true,
+    value: cached.payload,
+  };
+}
+
 
 export async function apiRequest<T>(
   path: string,
-  options: ApiOptions = {},
+  options:
+    ApiOptions = {},
 ): Promise<T> {
-  const headers =
-    new Headers(
-      options.headers,
+  const {
+    skipJson = false,
+    offlineCache = true,
+    ...requestOptions
+  } = options;
+
+  const method =
+    requestOptions.method ??
+    "GET";
+
+  const allowCache =
+    offlineCache &&
+    isGetRequest(method) &&
+    path.startsWith(
+      "/api/v1/",
     );
 
+
+  const headers =
+    new Headers(
+      requestOptions.headers,
+    );
+
+
   if (
-    options.body &&
+    requestOptions.body &&
     !(
-      options.body
+      requestOptions.body
         instanceof FormData
     ) &&
     !headers.has(
@@ -338,30 +501,56 @@ export async function apiRequest<T>(
     );
   }
 
-  let response: Response;
+
+  let response:
+    Response;
+
 
   try {
     response = await fetch(
       path,
       {
-        ...options,
+        ...requestOptions,
         headers,
+
         credentials:
           "include",
       },
     );
+
+    emitServerState(
+      true,
+    );
   } catch {
+    emitServerState(
+      false,
+    );
+
+    if (allowCache) {
+      const cached =
+        await cachedFallback<T>(
+          path,
+        );
+
+      if (cached.found) {
+        return cached.value;
+      }
+    }
+
     throw new ApiError(
       0,
       "Нет связи с сервером.",
     );
   }
 
+
   const raw =
     await response.text();
 
-  let payload: unknown =
-    null;
+
+  let payload:
+    unknown = null;
+
 
   if (raw) {
     try {
@@ -372,23 +561,54 @@ export async function apiRequest<T>(
     }
   }
 
+
   if (!response.ok) {
+    if (
+      allowCache &&
+      response.status >= 500
+    ) {
+      const cached =
+        await cachedFallback<T>(
+          path,
+        );
+
+      if (cached.found) {
+        emitServerState(
+          false,
+        );
+
+        return cached.value;
+      }
+    }
+
     throw new ApiError(
       response.status,
+
       extractErrorMessage(
         response.status,
         payload,
       ),
+
       payload,
     );
   }
 
+
   if (
-    options.skipJson ||
+    skipJson ||
     response.status === 204
   ) {
     return undefined as T;
   }
+
+
+  if (allowCache) {
+    await cacheApiResponse(
+      path,
+      payload,
+    );
+  }
+
 
   return payload as T;
 }

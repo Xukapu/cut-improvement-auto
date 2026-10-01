@@ -1,0 +1,37 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+>
+  <rect
+    width="512"
+    height="512"
+    rx="112"
+    fill="#263944"
+  />
+
+  <circle
+    cx="256"
+    cy="256"
+    r="154"
+    fill="#f4f6f7"
+  />
+
+  <path
+    d="M164 190h184v42H164zm0 90h184v42H164z"
+    fill="#263944"
+  />
+
+  <circle
+    cx="194"
+    cy="256"
+    r="30"
+    fill="#263944"
+  />
+
+  <circle
+    cx="318"
+    cy="256"
+    r="30"
+    fill="#263944"
+  />
+</svg>

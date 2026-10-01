@@ -17,6 +17,7 @@ from app.api.v1.payments import router as payments_router
 from app.api.v1.recommended_works import router as recommended_works_router
 from app.api.v1.reports import router as reports_router
 from app.api.v1.search import router as search_router
+from app.api.v1.sync import router as sync_router
 from app.api.v1.vehicles import router as vehicles_router
 from app.api.v1.work_items import router as work_items_router
 from app.api.v1.work_orders import router as work_orders_router
@@ -31,6 +32,7 @@ api_router.include_router(vehicles_router)
 api_router.include_router(appointments_router)
 api_router.include_router(history_router)
 api_router.include_router(search_router)
+api_router.include_router(sync_router)
 api_router.include_router(work_participation_router)
 api_router.include_router(work_orders_router)
 api_router.include_router(employees_router)

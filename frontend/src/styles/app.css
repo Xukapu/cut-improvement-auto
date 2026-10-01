@@ -6868,3 +6868,70 @@ button {
 
 
 /* GLOBAL SEARCH FRONTEND 2026 END */
+
+/* SYNC OFFLINE FOUNDATION 2026 START */
+
+.sync-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  width: 100%;
+  min-height: 38px;
+
+  margin-bottom: 8px;
+  padding: 0 10px;
+
+  border: 1px solid
+    rgb(255 255 255 / 12%);
+  border-radius: 8px;
+
+  background:
+    rgb(255 255 255 / 5%);
+
+  color:
+    rgb(255 255 255 / 74%);
+
+  font-size: 10px;
+  font-weight: 750;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.sync-status-badge:hover {
+  background:
+    rgb(255 255 255 / 8%);
+}
+
+.sync-status-online {
+  color: #c7e5cf;
+}
+
+.sync-status-offline {
+  color: #f0c9a1;
+}
+
+.sync-status-checking {
+  color:
+    rgb(255 255 255 / 65%);
+}
+
+.sync-status-spin {
+  animation:
+    sync-status-spin
+    0.9s
+    linear
+    infinite;
+}
+
+@keyframes sync-status-spin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+/* SYNC OFFLINE FOUNDATION 2026 END */

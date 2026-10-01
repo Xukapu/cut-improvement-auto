@@ -41,6 +41,7 @@ import {
   DashboardVehicleStateCard,
 } from "./components/DashboardVehicleStateCard";
 import { GlobalSearchModal } from "./components/GlobalSearchModal";
+import { SyncStatusBadge } from "./components/SyncStatusBadge";
 import {
   AppointmentsPage,
 } from "./pages/AppointmentsPage";
@@ -707,6 +708,8 @@ function App() {
 
 
         <div className="sidebar-footer">
+          <SyncStatusBadge />
+
           <div
             className={
               `connection-status ${
