@@ -1,13 +1,11 @@
 import {
   Bell,
+  CalendarClock,
   Car,
-  CheckCircle2,
   ClipboardList,
   FileText,
   LogOut,
-  RefreshCw,
   Search,
-  ShieldCheck,
   Users,
   Wrench,
 } from "lucide-react";
@@ -30,6 +28,18 @@ import {
 import {
   getDashboard,
 } from "./api/dashboard";
+import { DashboardAppointmentsCard } from "./components/DashboardAppointmentsCard";
+import {
+  AppointmentsPage,
+} from "./pages/AppointmentsPage";
+import {
+  ClientsPage,
+} from "./pages/ClientsPage";
+import {
+  VehiclesPage,
+} from "./pages/VehiclesPage";
+import { DashboardAttentionCard } from "./components/DashboardAttentionCard";
+import { DashboardVehicleStateCard } from "./components/DashboardVehicleStateCard";
 import "./styles/app.css";
 import type {
   CurrentUser,
@@ -43,7 +53,6 @@ import type {
 import {
   formatDate,
   formatMoney,
-  formatTime,
   roleLabel,
   todayIso,
   userInitials,
@@ -54,27 +63,48 @@ type AuthState =
   | "anonymous"
   | "authenticated";
 
+type Section =
+  | "dashboard"
+  | "clients"
+  | "vehicles"
+  | "appointments"
+  | "workorders"
+  | "notifications"
+  | "reports";
+
+const sectionTitles: Record<
+  Section,
+  string
+> = {
+  dashboard: "Рабочая панель СТО",
+  clients: "Клиенты",
+  vehicles: "Автомобили",
+  appointments: "Записи",
+  workorders: "Заказ-наряды",
+  notifications: "Уведомления",
+  reports: "Отчёты",
+};
+
 function App() {
   const [
     authState,
     setAuthState,
-  ] = useState<AuthState>(
-    "checking",
-  );
+  ] = useState<AuthState>("checking");
 
   const [
     currentUser,
     setCurrentUser,
-  ] = useState<CurrentUser | null>(
-    null,
-  );
+  ] = useState<CurrentUser | null>(null);
+
+  const [
+    section,
+    setSection,
+  ] = useState<Section>("dashboard");
 
   const [
     dashboard,
     setDashboard,
-  ] = useState<DashboardResponse | null>(
-    null,
-  );
+  ] = useState<DashboardResponse | null>(null);
 
   const [
     dashboardLoading,
@@ -128,15 +158,11 @@ function App() {
 
         setDashboard(data);
       } catch (error) {
-        if (error instanceof ApiError) {
-          setDashboardError(
-            error.message,
-          );
-        } else {
-          setDashboardError(
-            "Не удалось загрузить рабочую панель.",
-          );
-        }
+        setDashboardError(
+          error instanceof ApiError
+            ? error.message
+            : "Не удалось загрузить рабочую панель.",
+        );
       } finally {
         setDashboardLoading(false);
       }
@@ -158,40 +184,62 @@ function App() {
     getCurrentUser()
       .then((user) => {
         setCurrentUser(user);
-        setAuthState(
-          "authenticated",
-        );
+        setAuthState("authenticated");
       })
       .catch((error) => {
         if (
           error instanceof ApiError &&
           error.status === 401
         ) {
-          setAuthState(
-            "anonymous",
-          );
+          setAuthState("anonymous");
           return;
         }
 
-        setBackendStatus(
-          "offline",
-        );
-        setAuthState(
-          "anonymous",
-        );
+        setBackendStatus("offline");
+        setAuthState("anonymous");
       });
   }, []);
 
   useEffect(() => {
     if (
-      authState ===
+      authState !==
       "authenticated"
     ) {
-      void loadDashboard();
+      return;
     }
+
+    let active = true;
+
+    getDashboard(reportDate)
+      .then((data) => {
+        if (!active) {
+          return;
+        }
+
+        setDashboard(data);
+        setDashboardError("");
+        setDashboardLoading(false);
+      })
+      .catch((error) => {
+        if (!active) {
+          return;
+        }
+
+        setDashboardError(
+          error instanceof ApiError
+            ? error.message
+            : "Не удалось загрузить рабочую панель.",
+        );
+
+        setDashboardLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [
     authState,
-    loadDashboard,
+    reportDate,
   ]);
 
   async function handleLogin(
@@ -209,24 +257,21 @@ function App() {
       });
 
       setCurrentUser(user);
-      setAuthState(
-        "authenticated",
-      );
+      setAuthState("authenticated");
       setPassword("");
-      setBackendStatus(
-        "online",
-      );
+      setBackendStatus("online");
     } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.status === 401) {
-          setLoginError(
-            "Неверный логин или пароль.",
-          );
-        } else {
-          setLoginError(
-            error.message,
-          );
-        }
+      if (
+        error instanceof ApiError &&
+        error.status === 401
+      ) {
+        setLoginError(
+          "Неверный логин или пароль.",
+        );
+      } else if (
+        error instanceof ApiError
+      ) {
+        setLoginError(error.message);
       } else {
         setLoginError(
           "Не удалось выполнить вход.",
@@ -243,15 +288,21 @@ function App() {
     } finally {
       setCurrentUser(null);
       setDashboard(null);
-      setAuthState(
-        "anonymous",
-      );
+      setSection("dashboard");
+      setAuthState("anonymous");
     }
   }
 
+  function navClass(
+    target: Section,
+  ): string {
+    return section === target
+      ? "nav-item nav-item-active"
+      : "nav-item";
+  }
+
   if (
-    authState ===
-    "checking"
+    authState === "checking"
   ) {
     return (
       <main className="auth-page">
@@ -273,8 +324,7 @@ function App() {
   }
 
   if (
-    authState ===
-    "anonymous"
+    authState === "anonymous"
   ) {
     return (
       <main className="auth-page">
@@ -312,9 +362,7 @@ function App() {
 
           <form
             className="login-form"
-            onSubmit={
-              handleLogin
-            }
+            onSubmit={handleLogin}
           >
             <label>
               <span>
@@ -420,8 +468,12 @@ function App() {
 
         <nav className="sidebar-nav">
           <button
-            className=
-              "nav-item nav-item-active"
+            className={navClass(
+              "dashboard",
+            )}
+            onClick={() => {
+              setSection("dashboard");
+            }}
             type="button"
           >
             <ClipboardList
@@ -431,7 +483,12 @@ function App() {
           </button>
 
           <button
-            className="nav-item"
+            className={navClass(
+              "clients",
+            )}
+            onClick={() => {
+              setSection("clients");
+            }}
             type="button"
           >
             <Users size={19} />
@@ -439,7 +496,12 @@ function App() {
           </button>
 
           <button
-            className="nav-item"
+            className={navClass(
+              "vehicles",
+            )}
+            onClick={() => {
+              setSection("vehicles");
+            }}
             type="button"
           >
             <Car size={19} />
@@ -447,7 +509,31 @@ function App() {
           </button>
 
           <button
-            className="nav-item"
+            className={navClass(
+              "appointments",
+            )}
+            onClick={() => {
+              setSection(
+                "appointments",
+              );
+            }}
+            type="button"
+          >
+            <CalendarClock
+              size={19}
+            />
+            Записи
+          </button>
+
+          <button
+            className={navClass(
+              "workorders",
+            )}
+            onClick={() => {
+              setSection(
+                "workorders",
+              );
+            }}
             type="button"
           >
             <Wrench size={19} />
@@ -455,7 +541,14 @@ function App() {
           </button>
 
           <button
-            className="nav-item"
+            className={navClass(
+              "notifications",
+            )}
+            onClick={() => {
+              setSection(
+                "notifications",
+              );
+            }}
             type="button"
           >
             <Bell size={19} />
@@ -463,7 +556,12 @@ function App() {
           </button>
 
           <button
-            className="nav-item"
+            className={navClass(
+              "reports",
+            )}
+            onClick={() => {
+              setSection("reports");
+            }}
             type="button"
           >
             <FileText size={19} />
@@ -506,7 +604,11 @@ function App() {
             </div>
 
             <h1>
-              Рабочая панель СТО
+              {
+                sectionTitles[
+                  section
+                ]
+              }
             </h1>
           </div>
 
@@ -542,8 +644,7 @@ function App() {
 
               <button
                 aria-label="Выйти"
-                className=
-                  "logout-button"
+                className="logout-button"
                 onClick={
                   handleLogout
                 }
@@ -556,295 +657,49 @@ function App() {
           </div>
         </header>
 
-        <section className="welcome-panel">
-          <div>
-            <div className="welcome-label">
-              <ShieldCheck
-                size={15}
-              />
-              Рабочая смена
-            </div>
-
-            <h2>
-              Что требует внимания
-              сегодня
-            </h2>
-
-            <p>
-              Здесь собрана текущая
-              ситуация по записям,
-              автомобилям в работе,
-              готовым заказам и
-              задолженности.
-            </p>
-          </div>
-
-          <button
-            className="refresh-button"
-            disabled={
-              dashboardLoading
-            }
-            onClick={() => {
-              void loadDashboard();
-            }}
-            type="button"
-          >
-            <RefreshCw
-              className={
-                dashboardLoading
-                  ? "spin"
-                  : ""
-              }
-              size={20}
+        {section === "dashboard" && (
+          <>
+                        <DashboardAttentionCard
+              dashboard={dashboard}
+              loading={dashboardLoading}
+              onRefresh={() => {
+                void loadDashboard();
+              }}
             />
 
-            Обновить
-          </button>
-        </section>
-
-        {dashboardError && (
-          <div className=
-            "dashboard-error"
-          >
-            {dashboardError}
-          </div>
-        )}
-
-        <section className="metric-grid">
-          <article className="metric-card">
-            <span className="metric-label">
-              Записи сегодня
-            </span>
-
-            <strong>
-              {dashboardLoading &&
-              !dashboard
-                ? "…"
-                : dashboard
-                  ?.scheduled_count ??
-                  0}
-            </strong>
-
-            <span className="metric-note">
-              не приехали:{" "}
-              {dashboard
-                ?.no_show_count ??
-                0}
-            </span>
-          </article>
-
-          <article className="metric-card">
-            <span className="metric-label">
-              В работе
-            </span>
-
-            <strong>
-              {dashboardLoading &&
-              !dashboard
-                ? "…"
-                : dashboard
-                  ?.in_progress_count ??
-                  0}
-            </strong>
-
-            <span className="metric-note">
-              заказ-наряды
-            </span>
-          </article>
-
-          <article className="metric-card">
-            <span className="metric-label">
-              Готовы к выдаче
-            </span>
-
-            <strong>
-              {dashboardLoading &&
-              !dashboard
-                ? "…"
-                : dashboard
-                  ?.ready_count ??
-                  0}
-            </strong>
-
-            <span className="metric-note">
-              автомобилей
-            </span>
-          </article>
-
-          <article className="metric-card">
-            <span className="metric-label">
-              Задолженность
-            </span>
-
-            <strong className=
-              "money-value"
-            >
-              {dashboardLoading &&
-              !dashboard
-                ? "…"
-                : formatMoney(
-                    dashboard
-                      ?.debt_total ??
-                      "0",
-                  )}
-            </strong>
-
-            <span className="metric-note">
-              текущая
-            </span>
-          </article>
-        </section>
-
-        <section className="workspace-grid">
-          <article className="workspace-card">
-            <div className="card-header">
-              <div>
-                <span className="card-kicker">
-                  Сегодня
-                </span>
-
-                <h3>
-                  Записи клиентов
-                </h3>
-              </div>
-
-              <button
-                className=
-                  "secondary-button"
-                type="button"
-              >
-                Новая запись
-              </button>
-            </div>
-
-            {dashboardLoading &&
-            !dashboard ? (
+            {dashboardError && (
               <div className=
-                "empty-state"
+                "dashboard-error"
               >
-                Загружаем записи...
-              </div>
-            ) : dashboard &&
-              dashboard
-                .appointments_today
-                .length > 0 ? (
-              <div className=
-                "appointment-list"
-              >
-                {dashboard
-                  .appointments_today
-                  .map(
-                    (appointment) => (
-                      <div
-                        className=
-                          "appointment-row"
-                        key={
-                          appointment
-                            .appointment_number
-                        }
-                      >
-                        <div className=
-                          "appointment-time"
-                        >
-                          {formatTime(
-                            appointment
-                              .appointment_time,
-                          )}
-                        </div>
-
-                        <div className=
-                          "appointment-main"
-                        >
-                          <strong>
-                            {
-                              appointment
-                                .client_name
-                            }
-                          </strong>
-
-                          <span>
-                            {
-                              appointment
-                                .vehicle_name
-                            }
-                            {appointment
-                              .license_plate
-                              ? ` · ${
-                                  appointment
-                                    .license_plate
-                                }`
-                              : ""}
-                          </span>
-
-                          <small>
-                            {
-                              appointment
-                                .reason
-                            }
-                          </small>
-                        </div>
-
-                        <div className=
-                          "appointment-number"
-                        >
-                          Запись №
-                          {
-                            appointment
-                              .appointment_number
-                          }
-                        </div>
-                      </div>
-                    ),
-                  )}
-              </div>
-            ) : (
-              <div className=
-                "empty-state"
-              >
-                <ClipboardList
-                  size={28}
-                />
-
-                <div>
-                  <strong>
-                    На сегодня записей
-                    нет
-                  </strong>
-
-                  <p>
-                    Здесь появятся
-                    записи клиентов на
-                    выбранный день.
-                  </p>
-                </div>
+                {dashboardError}
               </div>
             )}
-          </article>
 
-          <article className=
-            "workspace-card"
-          >
-            <div className="card-header">
-              <div>
-                <span className=
-                  "card-kicker"
-                >
-                  Состояние ремонта
+            <section className="metric-grid">
+              <article className="metric-card">
+                <span className="metric-label">
+                  Записи сегодня
                 </span>
 
-                <h3>
-                  Автомобили
-                </h3>
-              </div>
-            </div>
+                <strong>
+                  {dashboardLoading &&
+                  !dashboard
+                    ? "…"
+                    : dashboard
+                      ?.scheduled_count ??
+                      0}
+                </strong>
 
-            <div className=
-              "order-summary-list"
-            >
-              <div className=
-                "order-summary-item"
-              >
-                <span>
+                <span className="metric-note">
+                  не приехали:{" "}
+                  {dashboard
+                    ?.no_show_count ??
+                    0}
+                </span>
+              </article>
+
+              <article className="metric-card">
+                <span className="metric-label">
                   В работе
                 </span>
 
@@ -853,12 +708,14 @@ function App() {
                     ?.in_progress_count ??
                     0}
                 </strong>
-              </div>
 
-              <div className=
-                "order-summary-item"
-              >
-                <span>
+                <span className="metric-note">
+                  заказ-наряды
+                </span>
+              </article>
+
+              <article className="metric-card">
+                <span className="metric-label">
                   Готовы к выдаче
                 </span>
 
@@ -867,67 +724,83 @@ function App() {
                     ?.ready_count ??
                     0}
                 </strong>
-              </div>
 
-              <div className=
-                "order-summary-item"
-              >
-                <span>
-                  Долги
+                <span className="metric-note">
+                  автомобилей
+                </span>
+              </article>
+
+              <article className="metric-card">
+                <span className="metric-label">
+                  Задолженность
                 </span>
 
-                <strong>
-                  {dashboard
-                    ?.debts
-                    .length ??
-                    0}
-                </strong>
-              </div>
-            </div>
-
-            {dashboard &&
-              dashboard.ready.length >
-                0 && (
-                <div className=
-                  "ready-list"
-                >
-                  {dashboard.ready.map(
-                    (order) => (
-                      <div
-                        className=
-                          "ready-row"
-                        key={
-                          order
-                            .work_order_number
-                        }
-                      >
-                        <CheckCircle2
-                          size={17}
-                        />
-
-                        <div>
-                          <strong>
-                            Заказ-наряд №
-                            {
-                              order
-                                .work_order_number
-                            }
-                          </strong>
-
-                          <span>
-                            {
-                              order
-                                .vehicle_name
-                            }
-                          </span>
-                        </div>
-                      </div>
-                    ),
+                <strong className="money-value">
+                  {formatMoney(
+                    dashboard
+                      ?.debt_total ??
+                      "0",
                   )}
-                </div>
-              )}
-          </article>
-        </section>
+                </strong>
+
+                <span className="metric-note">
+                  текущая
+                </span>
+              </article>
+            </section>
+
+            <section className="workspace-grid">
+                            <DashboardAppointmentsCard
+                onOpenAppointments={() => {
+                  setSection("appointments");
+                }}
+              />
+
+                            <DashboardVehicleStateCard
+                dashboard={dashboard}
+              />
+            </section>
+          </>
+        )}
+
+        {section === "clients" &&
+          currentUser && (
+            <ClientsPage
+              currentUser={
+                currentUser
+              }
+            />
+          )}
+
+        {section === "vehicles" && (
+          <VehiclesPage />
+        )}
+
+        {section ===
+          "appointments" && (
+          <AppointmentsPage />
+        )}
+
+        {(section ===
+          "workorders" ||
+          section ===
+            "notifications" ||
+          section === "reports") && (
+          <section className="placeholder-page">
+            <Wrench size={36} />
+
+            <h2>
+              Раздел уже на очереди
+            </h2>
+
+            <p>
+              Backend для него уже
+              существует. Интерфейс
+              подключим следующим
+              широким блоком.
+            </p>
+          </section>
+        )}
       </main>
     </div>
   );

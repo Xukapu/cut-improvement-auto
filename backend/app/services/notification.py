@@ -131,7 +131,8 @@ def get_or_create_preferences(
     )
 
     db.add(preferences)
-    db.flush()
+    if not getattr(db, "_flushing", False):
+        db.flush()
 
     return preferences
 
