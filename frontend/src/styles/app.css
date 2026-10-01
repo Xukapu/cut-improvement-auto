@@ -2644,3 +2644,2055 @@ button {
   background: #eeeeef;
   color: #737b83;
 }
+
+/* REAL WORK ORDERS 2026 */
+
+.wo-page {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+}
+
+.wo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 8px;
+
+  border: 1px solid #e0e4e8;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.wo-filters,
+.wo-toolbar-actions,
+.wo-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wo-filter,
+.wo-refresh,
+.wo-secondary-action,
+.wo-add-button,
+.wo-status-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding: 0 11px;
+
+  border: 1px solid #dce1e5;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #5f6972;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.wo-filter {
+  border-color: transparent;
+}
+
+.wo-filter:hover,
+.wo-refresh:hover,
+.wo-secondary-action:hover,
+.wo-add-button:hover {
+  background: #f4f6f7;
+}
+
+.wo-filter-active {
+  background: #edf1f3;
+  color: #17212a;
+}
+
+.wo-status-action {
+  border-color: #263440;
+  background: #263440;
+  color: #ffffff;
+}
+
+.wo-new-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wo-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #efd4d4;
+  border-radius: 9px;
+
+  background: #fff5f5;
+  color: #9d4141;
+
+  font-size: 11px;
+}
+
+.wo-layout {
+  display: grid;
+  grid-template-columns: 285px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 600px;
+}
+
+.wo-list-panel,
+.wo-detail-panel {
+  min-width: 0;
+
+  border: 1px solid #e0e4e8;
+  border-radius: 13px;
+
+  background: #ffffff;
+}
+
+.wo-list-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+.wo-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 13px;
+
+  border-bottom: 1px solid #edf0f2;
+
+  color: #737e87;
+
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wo-list-heading strong {
+  display: grid;
+  place-items: center;
+
+  min-width: 24px;
+  height: 24px;
+
+  border-radius: 7px;
+
+  background: #eef1f3;
+  color: #36414a;
+}
+
+.wo-order-list {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+
+  padding: 7px;
+
+  overflow: auto;
+}
+
+.wo-order-card {
+  display: grid;
+  gap: 6px;
+
+  width: 100%;
+
+  padding: 10px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  background: #f7f8f9;
+  color: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.wo-order-card:hover {
+  border-color: #d7dde1;
+}
+
+.wo-order-card-active {
+  border-color: #bfc9d0;
+  background: #eef2f4;
+}
+
+.wo-order-card-top,
+.wo-order-card-bottom,
+.wo-item-main,
+.wo-section-heading,
+.wo-editor-heading,
+.wo-photo-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wo-order-card-top > strong {
+  font-size: 11px;
+}
+
+.wo-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 22px;
+
+  padding: 0 7px;
+
+  border-radius: 7px;
+
+  font-size: 8px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.wo-status-planned {
+  background: #f0f2f4;
+  color: #69747e;
+}
+
+.wo-status-in_progress {
+  background: #eef4fa;
+  color: #3e6e95;
+}
+
+.wo-status-ready {
+  background: #edf7f0;
+  color: #4d7e5b;
+}
+
+.wo-status-issued {
+  background: #eceeef;
+  color: #555f67;
+}
+
+.wo-order-client {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.wo-order-vehicle {
+  color: #626d76;
+  font-size: 10px;
+}
+
+.wo-order-reason {
+  display: -webkit-box;
+  overflow: hidden;
+
+  color: #808991;
+
+  font-size: 9px;
+  line-height: 1.45;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.wo-order-card-bottom {
+  padding-top: 3px;
+
+  color: #9098a0;
+
+  font-size: 8px;
+}
+
+.wo-empty,
+.wo-detail-empty,
+.wo-section-empty {
+  display: grid;
+  place-items: center;
+  gap: 5px;
+
+  padding: 24px;
+
+  color: #8a939b;
+
+  font-size: 10px;
+  text-align: center;
+}
+
+.wo-detail-empty {
+  min-height: 420px;
+}
+
+.wo-detail-empty strong {
+  color: #525e67;
+  font-size: 13px;
+}
+
+.wo-detail-panel {
+  display: grid;
+  align-content: start;
+
+  overflow: hidden;
+}
+
+.wo-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 16px 17px 12px;
+}
+
+.wo-detail-number {
+  color: #858f98;
+
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wo-detail-header h2 {
+  margin: 4px 0 2px;
+
+  font-size: 19px;
+}
+
+.wo-detail-car {
+  color: #67727b;
+
+  font-size: 11px;
+}
+
+.wo-detail-status-box {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.wo-overview {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 2fr)
+    repeat(3, minmax(90px, 1fr));
+  gap: 7px;
+
+  padding: 0 17px 11px;
+}
+
+.wo-overview > div,
+.wo-summary-strip > div,
+.wo-payment-summary > div {
+  display: grid;
+  gap: 3px;
+
+  min-width: 0;
+
+  padding: 9px 10px;
+
+  border-radius: 8px;
+
+  background: #f6f7f8;
+}
+
+.wo-overview span,
+.wo-summary-strip span,
+.wo-payment-summary span {
+  color: #89929a;
+
+  font-size: 8px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.wo-overview strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  color: #374149;
+
+  font-size: 10px;
+}
+
+.wo-order-edit-line {
+  padding: 0 17px 10px;
+}
+
+.wo-link-button,
+.wo-danger-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.wo-link-button {
+  color: #556d7f;
+}
+
+.wo-danger-link {
+  color: #a74b4b;
+}
+
+.wo-inline-form,
+.wo-editor {
+  display: grid;
+  gap: 10px;
+
+  margin: 0 17px 12px;
+  padding: 12px;
+
+  border: 1px solid #d8dee2;
+  border-radius: 10px;
+
+  background: #fafbfb;
+}
+
+.wo-inline-form label,
+.wo-form-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.wo-inline-form label span,
+.wo-form-grid label span {
+  color: #626d75;
+
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.wo-inline-form input,
+.wo-inline-form textarea,
+.wo-form-grid input,
+.wo-form-grid textarea,
+.wo-form-grid select,
+.wo-assignment-row input,
+.wo-assignment-row select {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  padding: 8px 9px;
+
+  border: 1px solid #d8dde1;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #1d252c;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+.wo-inline-form textarea,
+.wo-form-grid textarea {
+  resize: vertical;
+}
+
+.wo-form-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.wo-wide {
+  grid-column: 1 / -1;
+}
+
+.wo-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.wo-form-actions .primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wo-summary-strip {
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+  gap: 6px;
+
+  padding: 0 17px 12px;
+}
+
+.wo-summary-strip strong,
+.wo-payment-summary strong {
+  font-size: 11px;
+}
+
+.wo-summary-debt {
+  background: #fff2f2 !important;
+}
+
+.wo-summary-debt strong,
+.wo-payment-debt strong {
+  color: #a54949;
+}
+
+.wo-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  overflow-x: auto;
+
+  padding: 0 12px;
+
+  border-top: 1px solid #edf0f2;
+  border-bottom: 1px solid #e4e8eb;
+
+  background: #fafbfb;
+}
+
+.wo-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  min-height: 42px;
+
+  padding: 0 9px;
+
+  border: 0;
+  border-bottom: 2px solid transparent;
+
+  background: transparent;
+  color: #78828a;
+
+  font-size: 9px;
+  font-weight: 750;
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.wo-tab > span {
+  display: grid;
+  place-items: center;
+
+  min-width: 18px;
+  height: 18px;
+
+  border-radius: 6px;
+
+  background: #eceff1;
+
+  font-size: 8px;
+}
+
+.wo-tab-active {
+  border-bottom-color: #354652;
+  color: #25323c;
+}
+
+.wo-tab-content {
+  min-height: 280px;
+}
+
+.wo-tab-loading {
+  opacity: 0.55;
+}
+
+.wo-section {
+  display: grid;
+  gap: 10px;
+
+  padding: 14px 17px 18px;
+}
+
+.wo-section-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wo-section-heading span {
+  color: #8a939b;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wo-section-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.wo-add-button {
+  min-height: 32px;
+}
+
+.wo-editor {
+  margin: 0;
+}
+
+.wo-editor-heading strong {
+  font-size: 11px;
+}
+
+.wo-icon-button {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  border: 1px solid #dce1e5;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #6e7880;
+
+  cursor: pointer;
+}
+
+.wo-assignment-block {
+  display: grid;
+  gap: 7px;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  background: #f1f3f4;
+}
+
+.wo-assignment-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  font-size: 9px;
+}
+
+.wo-assignment-title span {
+  color: #818a92;
+}
+
+.wo-assignment-row {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 1fr)
+    100px
+    32px;
+  gap: 6px;
+}
+
+.wo-item-list {
+  display: grid;
+  gap: 7px;
+}
+
+.wo-item-card,
+.wo-dispute-card,
+.wo-payment-row {
+  display: grid;
+  gap: 8px;
+
+  padding: 11px;
+
+  border: 1px solid #e5e8ea;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.wo-item-main > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wo-item-main span,
+.wo-payment-row span,
+.wo-dispute-heading span,
+.wo-dispute-note span {
+  color: #8a939b;
+
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.wo-item-main strong {
+  font-size: 11px;
+}
+
+.wo-money {
+  flex-shrink: 0;
+  font-size: 12px !important;
+}
+
+.wo-performers {
+  display: grid;
+  gap: 4px;
+}
+
+.wo-performers > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 5px 7px;
+
+  border-radius: 6px;
+
+  background: #f5f7f8;
+
+  font-size: 9px;
+}
+
+.wo-performers small {
+  margin-left: auto;
+
+  color: #7b858d;
+  font-size: 8px;
+}
+
+.wo-financial-line {
+  display: flex;
+  justify-content: space-between;
+
+  padding-top: 6px;
+
+  border-top: 1px solid #eceff1;
+
+  color: #657079;
+  font-size: 9px;
+}
+
+.wo-item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  padding-top: 5px;
+}
+
+.wo-part-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  color: #7e878f;
+
+  font-size: 9px;
+}
+
+.wo-item-text {
+  margin: 0;
+
+  color: #626d75;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.wo-dispute-heading strong {
+  display: block;
+  margin-top: 4px;
+
+  font-size: 10px;
+}
+
+.wo-dispute-heading p,
+.wo-dispute-note p,
+.wo-payment-row p {
+  margin: 3px 0 0;
+
+  color: #606b73;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.wo-dispute-note {
+  padding: 8px;
+
+  border-radius: 7px;
+
+  background: #f6f7f8;
+}
+
+.wo-photo-area {
+  display: grid;
+  gap: 6px;
+
+  padding: 8px;
+
+  border-radius: 8px;
+
+  background: #f7f8f9;
+}
+
+.wo-photo-heading strong {
+  font-size: 9px;
+}
+
+.wo-photo-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  color: #526b7c;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.wo-photo-upload input {
+  display: none;
+}
+
+.wo-photo-list {
+  display: grid;
+  gap: 4px;
+}
+
+.wo-photo-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wo-photo-item > button:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+  flex: 1;
+
+  padding: 6px 7px;
+
+  border: 1px solid #e1e5e8;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #59656e;
+
+  font-size: 9px;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.wo-photo-item > button:first-child span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wo-photo-delete {
+  display: grid;
+  place-items: center;
+
+  width: 29px;
+  height: 29px;
+
+  padding: 0;
+
+  border: 1px solid #efdada;
+  border-radius: 6px;
+
+  background: #fffafa;
+  color: #a34e4e;
+
+  cursor: pointer;
+}
+
+.wo-no-photos {
+  color: #8a9299;
+  font-size: 9px;
+}
+
+.wo-payment-summary {
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.wo-payment-debt {
+  background: #fff2f2 !important;
+}
+
+.wo-payment-row {
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    auto;
+  align-items: center;
+}
+
+.wo-payment-row > div:first-child {
+  min-width: 0;
+}
+
+.wo-payment-row strong {
+  display: block;
+  margin-top: 2px;
+
+  font-size: 10px;
+}
+
+.wo-payment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wo-modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgb(14 20 25 / 38%);
+}
+
+.wo-modal {
+  display: grid;
+  gap: 14px;
+
+  width: min(620px, 100%);
+  max-height: calc(100vh - 40px);
+
+  overflow: auto;
+
+  padding: 17px;
+
+  border: 1px solid #d9dee2;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow: 0 18px 60px rgb(0 0 0 / 18%);
+}
+
+.wo-modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wo-modal-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wo-modal-heading span {
+  color: #89929a;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wo-modal-heading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+@media (max-width: 1100px) {
+  .wo-layout {
+    grid-template-columns: 245px minmax(0, 1fr);
+  }
+
+  .wo-overview,
+  .wo-summary-strip,
+  .wo-payment-summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .wo-toolbar,
+  .wo-detail-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wo-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .wo-list-panel {
+    max-height: 320px;
+  }
+
+  .wo-detail-status-box {
+    justify-items: start;
+  }
+}
+
+@media (max-width: 600px) {
+  .wo-form-grid,
+  .wo-overview,
+  .wo-summary-strip,
+  .wo-payment-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .wo-wide {
+    grid-column: auto;
+  }
+
+  .wo-assignment-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      90px
+      32px;
+  }
+
+  .wo-payment-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* OWNER WORK PARTICIPATION AND PHOTO LIGHTBOX 2026 */
+
+.work-participation-card {
+  align-content: start;
+}
+
+.work-participation-loading {
+  padding: 16px;
+
+  border-radius: 9px;
+
+  background: #f5f7f8;
+  color: #7d8790;
+
+  font-size: 10px;
+}
+
+.work-participation-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 11px;
+
+  border-radius: 9px;
+
+  background: #f5f7f8;
+
+  cursor: pointer;
+}
+
+.work-participation-toggle input {
+  width: 16px;
+  height: 16px;
+
+  margin-top: 1px;
+}
+
+.work-participation-toggle > div {
+  display: grid;
+  gap: 3px;
+}
+
+.work-participation-toggle strong {
+  font-size: 11px;
+}
+
+.work-participation-toggle span {
+  color: #7d8790;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.work-participation-rate {
+  display: grid;
+  gap: 5px;
+}
+
+.work-participation-rate > span {
+  color: #626d75;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.work-participation-rate input {
+  width: 100%;
+  height: 38px;
+
+  box-sizing: border-box;
+
+  padding: 0 10px;
+
+  border: 1px solid #d8dde1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #18212a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+.work-participation-rate input:disabled {
+  background: #f1f3f4;
+  color: #929aa1;
+}
+
+.work-participation-linked {
+  display: grid;
+  gap: 2px;
+
+  padding: 10px 11px;
+
+  border-radius: 9px;
+
+  background: #f5f7f8;
+}
+
+.work-participation-linked span {
+  color: #89929a;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.work-participation-linked strong {
+  font-size: 11px;
+}
+
+.work-participation-linked small {
+  color: #7f8991;
+
+  font-size: 9px;
+}
+
+
+/* PHOTO GALLERY */
+
+.wo-photo-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wo-photo-heading > div > span {
+  display: grid;
+  place-items: center;
+
+  min-width: 20px;
+  height: 20px;
+
+  border-radius: 6px;
+
+  background: #e8ecef;
+  color: #59656e;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.wo-photo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 72px;
+
+  border: 1px dashed #d6dce0;
+  border-radius: 8px;
+
+  color: #8a939b;
+
+  font-size: 9px;
+}
+
+.wo-photo-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(105px, 1fr)
+    );
+  gap: 7px;
+}
+
+.wo-photo-thumb-wrap {
+  position: relative;
+
+  min-width: 0;
+}
+
+.wo-photo-thumb {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+
+  padding: 0;
+
+  border: 1px solid #dfe4e7;
+  border-radius: 8px;
+
+  background: #e9edef;
+
+  cursor: pointer;
+}
+
+.wo-photo-thumb img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.wo-photo-thumb > span {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+
+  padding: 4px 5px;
+
+  border-radius: 5px;
+
+  background: rgb(14 20 25 / 68%);
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 750;
+}
+
+.wo-photo-thumb-delete {
+  position: absolute;
+  z-index: 2;
+  top: 5px;
+  right: 5px;
+
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  padding: 0;
+
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 7px;
+
+  background: rgb(35 42 47 / 72%);
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.wo-lightbox {
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgb(8 12 16 / 84%);
+}
+
+.wo-lightbox-shell {
+  display: grid;
+  grid-template-rows:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  width: min(
+    1100px,
+    calc(100vw - 40px)
+  );
+
+  height: min(
+    820px,
+    calc(100vh - 40px)
+  );
+
+  overflow: hidden;
+
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 14px;
+
+  background: #141a1f;
+
+  box-shadow:
+    0 24px 80px
+    rgb(0 0 0 / 42%);
+}
+
+.wo-lightbox-header,
+.wo-lightbox-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 11px 13px;
+
+  background: #1b2228;
+  color: #ffffff;
+}
+
+.wo-lightbox-header > div {
+  min-width: 0;
+
+  display: grid;
+  gap: 2px;
+}
+
+.wo-lightbox-header strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 11px;
+}
+
+.wo-lightbox-header span,
+.wo-lightbox-footer > span {
+  color: #aeb7bd;
+
+  font-size: 9px;
+}
+
+.wo-lightbox-close {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 8px;
+
+  background: transparent;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.wo-lightbox-image-area {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  min-height: 0;
+
+  padding: 14px;
+
+  overflow: hidden;
+}
+
+.wo-lightbox-image-area > img {
+  display: block;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+
+  border-radius: 6px;
+}
+
+.wo-lightbox-arrow {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 52px;
+
+  padding: 0;
+
+  transform: translateY(-50%);
+
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 9px;
+
+  background: rgb(18 24 29 / 74%);
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.wo-lightbox-arrow-left {
+  left: 12px;
+}
+
+.wo-lightbox-arrow-right {
+  right: 12px;
+}
+
+.wo-photo-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  min-height: 32px;
+
+  padding: 0 10px;
+
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 8px;
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.wo-photo-download:hover {
+  background: rgb(255 255 255 / 8%);
+}
+
+@media (max-width: 650px) {
+  .wo-lightbox {
+    padding: 8px;
+  }
+
+  .wo-lightbox-shell {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 16px);
+  }
+
+  .wo-photo-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+/* WORK ORDER TYPOGRAPHY LARGE 2026 START */
+
+/* Вкладки: Работы / Запчасти / Рекомендации / Спорные ситуации / Оплата */
+
+.wo-tab {
+  min-height: 46px;
+
+  padding: 0 12px;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.wo-tab > svg {
+  width: 17px;
+  height: 17px;
+}
+
+.wo-tab > span {
+  min-width: 21px;
+  height: 21px;
+
+  font-size: 9px;
+}
+
+
+/* Заголовок текущего блока */
+
+.wo-section {
+  gap: 12px;
+
+  padding: 16px 18px 20px;
+}
+
+.wo-section-heading span {
+  font-size: 9px;
+}
+
+.wo-section-heading h3 {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+
+/* Кнопки внутри рабочих вкладок */
+
+.wo-add-button {
+  min-height: 35px;
+
+  padding: 0 12px;
+
+  font-size: 10px;
+}
+
+
+/* Карточки работ / запчастей / рекомендаций */
+
+.wo-item-card,
+.wo-dispute-card,
+.wo-payment-row {
+  padding: 13px;
+
+  gap: 10px;
+}
+
+.wo-item-main span {
+  font-size: 9px;
+}
+
+.wo-item-main strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.wo-money {
+  font-size: 14px !important;
+}
+
+
+/* Исполнители работ */
+
+.wo-performers {
+  gap: 5px;
+}
+
+.wo-performers > div {
+  gap: 7px;
+
+  padding: 7px 9px;
+
+  font-size: 11px;
+}
+
+.wo-performers > div > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.wo-performers small {
+  font-size: 9px;
+}
+
+
+/* Финансовая строка владельца */
+
+.wo-financial-line {
+  padding-top: 8px;
+
+  font-size: 10px;
+}
+
+
+/* Запчасти */
+
+.wo-part-meta {
+  gap: 12px;
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+
+/* Рекомендации */
+
+.wo-item-text {
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+
+/* Спорные ситуации */
+
+.wo-dispute-heading span,
+.wo-dispute-note span {
+  font-size: 9px;
+}
+
+.wo-dispute-heading strong {
+  margin-top: 5px;
+
+  font-size: 12px;
+}
+
+.wo-dispute-heading p,
+.wo-dispute-note p {
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+
+/* Оплата */
+
+.wo-payment-row span {
+  font-size: 9px;
+}
+
+.wo-payment-row strong {
+  font-size: 11px;
+}
+
+.wo-payment-summary span,
+.wo-summary-strip span {
+  font-size: 9px;
+}
+
+.wo-payment-summary strong,
+.wo-summary-strip strong {
+  font-size: 12px;
+}
+
+
+/* Формы внутри заказ-наряда */
+
+.wo-form-grid label span,
+.wo-inline-form label span {
+  font-size: 10px;
+}
+
+.wo-form-grid input,
+.wo-form-grid textarea,
+.wo-form-grid select,
+.wo-inline-form input,
+.wo-inline-form textarea,
+.wo-assignment-row input,
+.wo-assignment-row select {
+  font-size: 11px;
+}
+
+
+/* Пустые состояния */
+
+.wo-section-empty {
+  font-size: 11px;
+}
+
+
+/* WORK ORDER TYPOGRAPHY LARGE 2026 END */
+
+/* WORK ORDER BLOCK SEPARATION 2026 START */
+
+/*
+   Отделяем верхнюю карточку заказ-наряда
+   от рабочей части ремонта.
+*/
+
+.wo-tabs {
+  margin-top: 14px;
+
+  border-top: 1px solid #dfe4e7;
+
+  box-shadow:
+    0 -6px 14px
+    rgb(20 30 38 / 3%);
+}
+
+
+/*
+   Добавляем воздух перед заголовком
+   "Выполненные работы / Работы".
+*/
+
+.wo-tab-content {
+  padding-top: 5px;
+}
+
+.wo-section {
+  padding-top: 18px;
+}
+
+
+/*
+   Заголовок рабочей части получает
+   собственную визуальную зону.
+*/
+
+.wo-section-heading {
+  padding-bottom: 11px;
+
+  border-bottom:
+    1px solid #edf0f2;
+}
+
+
+/*
+   Список работ тоже не прилипает
+   непосредственно к заголовку.
+*/
+
+.wo-item-list {
+  margin-top: 3px;
+}
+
+
+/* WORK ORDER BLOCK SEPARATION 2026 END */
+
+/* WORK ORDER PRINT AND LARGE STATUS 2026 START */
+
+
+/* =========================================================
+   КРУПНЫЕ СТАТУСЫ
+   ========================================================= */
+
+.wo-status {
+  min-height: 28px;
+
+  padding: 0 10px;
+
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+}
+
+.wo-detail-status-box .wo-status {
+  min-height: 36px;
+
+  padding: 0 14px;
+
+  font-size: 14px;
+}
+
+.wo-detail-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+
+/* =========================================================
+   КНОПКА ПЕЧАТИ
+   ========================================================= */
+
+.wo-print-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 36px;
+
+  padding: 0 13px;
+
+  border: 1px solid #cbd3d8;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #34434e;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.wo-print-button:hover {
+  background: #f2f5f6;
+}
+
+
+/* =========================================================
+   PDF PREVIEW
+   ========================================================= */
+
+.wo-pdf-overlay {
+  position: fixed;
+  z-index: 5000;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 16px;
+
+  background: rgb(11 16 20 / 68%);
+}
+
+.wo-pdf-window {
+  display: grid;
+  grid-template-rows:
+    auto
+    auto
+    minmax(0, 1fr);
+
+  width: min(
+    1180px,
+    calc(100vw - 32px)
+  );
+
+  height: min(
+    920px,
+    calc(100vh - 32px)
+  );
+
+  overflow: hidden;
+
+  border: 1px solid #cfd6db;
+  border-radius: 14px;
+
+  background: #e9edef;
+
+  box-shadow:
+    0 26px 90px
+    rgb(0 0 0 / 32%);
+}
+
+
+.wo-pdf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  min-height: 58px;
+
+  padding: 8px 11px;
+
+  border-bottom: 1px solid #d9dfe3;
+
+  background: #ffffff;
+}
+
+.wo-pdf-toolbar-left,
+.wo-pdf-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wo-pdf-toolbar-left > svg {
+  color: #596a76;
+}
+
+.wo-pdf-toolbar-left > div {
+  display: grid;
+  gap: 2px;
+}
+
+.wo-pdf-toolbar-left strong {
+  font-size: 12px;
+}
+
+.wo-pdf-toolbar-left span {
+  color: #7b858d;
+
+  font-size: 9px;
+}
+
+
+.wo-pdf-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding: 0 10px;
+
+  border: 1px solid #d3d9dd;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #46545f;
+
+  font-size: 10px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.wo-pdf-action:hover {
+  background: #f3f5f6;
+}
+
+
+.wo-pdf-close {
+  display: grid;
+  place-items: center;
+
+  width: 35px;
+  height: 35px;
+
+  padding: 0;
+
+  border: 1px solid #d9dee2;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #66727b;
+
+  cursor: pointer;
+}
+
+.wo-pdf-close:hover {
+  background: #f2f4f5;
+}
+
+
+.wo-pdf-switcher {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 49px;
+
+  padding: 7px 11px;
+
+  border-bottom: 1px solid #d6dde1;
+
+  background: #f8f9fa;
+}
+
+
+.wo-pdf-type {
+  min-height: 34px;
+
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #69747c;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.wo-pdf-type:hover:not(:disabled) {
+  background: #eceff1;
+}
+
+.wo-pdf-type-active {
+  border-color: #cbd3d8;
+
+  background: #ffffff;
+  color: #1f2a32;
+
+  box-shadow:
+    0 1px 3px
+    rgb(0 0 0 / 5%);
+}
+
+.wo-pdf-type:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.wo-pdf-act-note {
+  margin-left: 4px;
+
+  color: #8b949b;
+
+  font-size: 9px;
+}
+
+
+.wo-pdf-viewer {
+  min-height: 0;
+
+  padding: 12px;
+
+  background: #dfe4e7;
+}
+
+.wo-pdf-viewer iframe {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 3px 14px
+    rgb(0 0 0 / 9%);
+}
+
+
+@media (max-width: 800px) {
+  .wo-pdf-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wo-pdf-toolbar-right {
+    flex-wrap: wrap;
+  }
+
+  .wo-pdf-switcher {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wo-pdf-act-note {
+    margin-left: 0;
+  }
+}
+
+
+/* WORK ORDER PRINT AND LARGE STATUS 2026 END */

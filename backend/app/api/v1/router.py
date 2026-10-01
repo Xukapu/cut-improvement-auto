@@ -19,6 +19,7 @@ from app.api.v1.search import router as search_router
 from app.api.v1.vehicles import router as vehicles_router
 from app.api.v1.work_items import router as work_items_router
 from app.api.v1.work_orders import router as work_orders_router
+from app.api.v1.work_participation import router as work_participation_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -29,6 +30,7 @@ api_router.include_router(vehicles_router)
 api_router.include_router(appointments_router)
 api_router.include_router(history_router)
 api_router.include_router(search_router)
+api_router.include_router(work_participation_router)
 api_router.include_router(work_orders_router)
 api_router.include_router(employees_router)
 api_router.include_router(work_items_router)

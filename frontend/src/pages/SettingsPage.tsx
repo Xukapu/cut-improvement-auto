@@ -1,3 +1,4 @@
+import { WorkParticipationCard } from "../components/WorkParticipationCard";
 import {
   Archive,
   KeyRound,
@@ -1148,6 +1149,10 @@ export function SettingsPage({
             </div>
           </form>
 
+
+          {owner && (
+            <WorkParticipationCard />
+          )}
 
           <form
             className="settings-card"

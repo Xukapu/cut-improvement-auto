@@ -220,7 +220,6 @@ def open_dispute_photo(
     return FileResponse(
         path=path,
         media_type=photo.content_type,
-        filename=photo.original_filename,
     )
 
 

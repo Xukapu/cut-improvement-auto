@@ -52,6 +52,9 @@ import {
 import {
   VehiclesPage,
 } from "./pages/VehiclesPage";
+import {
+  WorkOrdersPage,
+} from "./pages/WorkOrdersPage";
 import "./styles/app.css";
 import type {
   CurrentUser,
@@ -88,33 +91,51 @@ type Section =
   | "settings";
 
 
-const sectionTitles: Record<
-  Section,
-  string
-> = {
-  dashboard: "Рабочая панель СТО",
-  clients: "Клиенты",
-  vehicles: "Автомобили",
-  appointments: "Записи",
-  workorders: "Заказ-наряды",
-  notifications: "Уведомления",
-  reports: "Отчёты",
-  settings: "Настройки",
-};
+const sectionTitles:
+  Record<
+    Section,
+    string
+  > = {
+    dashboard:
+      "Рабочая панель СТО",
+
+    clients:
+      "Клиенты",
+
+    vehicles:
+      "Автомобили",
+
+    appointments:
+      "Записи",
+
+    workorders:
+      "Заказ-наряды",
+
+    notifications:
+      "Уведомления",
+
+    reports:
+      "Отчёты",
+
+    settings:
+      "Настройки",
+  };
 
 
 function App() {
   const [
     authState,
     setAuthState,
-  ] = useState<AuthState>("checking");
+  ] = useState<AuthState>(
+    "checking",
+  );
 
   const [
     currentUser,
     setCurrentUser,
-  ] = useState<CurrentUser | null>(
-    null,
-  );
+  ] = useState<
+    CurrentUser | null
+  >(null);
 
   const [
     section,
@@ -126,9 +147,9 @@ function App() {
   const [
     dashboard,
     setDashboard,
-  ] = useState<DashboardResponse | null>(
-    null,
-  );
+  ] = useState<
+    DashboardResponse | null
+  >(null);
 
   const [
     dashboardLoading,
@@ -144,7 +165,9 @@ function App() {
     backendStatus,
     setBackendStatus,
   ] = useState<
-    "loading" | "online" | "offline"
+    | "loading"
+    | "online"
+    | "offline"
   >("loading");
 
   const [
@@ -167,12 +190,15 @@ function App() {
     setLoginError,
   ] = useState("");
 
-  const reportDate = todayIso();
+  const reportDate =
+    todayIso();
 
 
   const loadDashboard =
     useCallback(async () => {
-      setDashboardLoading(true);
+      setDashboardLoading(
+        true,
+      );
       setDashboardError("");
 
       try {
@@ -189,7 +215,9 @@ function App() {
             : "Не удалось загрузить рабочую панель.",
         );
       } finally {
-        setDashboardLoading(false);
+        setDashboardLoading(
+          false,
+        );
       }
     }, [reportDate]);
 
@@ -199,10 +227,14 @@ function App() {
       "/health",
     )
       .then(() => {
-        setBackendStatus("online");
+        setBackendStatus(
+          "online",
+        );
       })
       .catch(() => {
-        setBackendStatus("offline");
+        setBackendStatus(
+          "offline",
+        );
       });
   }, []);
 
@@ -211,21 +243,30 @@ function App() {
     getCurrentUser()
       .then((user) => {
         setCurrentUser(user);
+
         setAuthState(
           "authenticated",
         );
       })
       .catch((error) => {
         if (
-          error instanceof ApiError &&
+          error instanceof
+            ApiError &&
           error.status === 401
         ) {
-          setAuthState("anonymous");
+          setAuthState(
+            "anonymous",
+          );
           return;
         }
 
-        setBackendStatus("offline");
-        setAuthState("anonymous");
+        setBackendStatus(
+          "offline",
+        );
+
+        setAuthState(
+          "anonymous",
+        );
       });
   }, []);
 
@@ -240,7 +281,9 @@ function App() {
 
     let active = true;
 
-    getDashboard(reportDate)
+    getDashboard(
+      reportDate,
+    )
       .then((data) => {
         if (!active) {
           return;
@@ -248,7 +291,9 @@ function App() {
 
         setDashboard(data);
         setDashboardError("");
-        setDashboardLoading(false);
+        setDashboardLoading(
+          false,
+        );
       })
       .catch((error) => {
         if (!active) {
@@ -261,7 +306,9 @@ function App() {
             : "Не удалось загрузить рабочую панель.",
         );
 
-        setDashboardLoading(false);
+        setDashboardLoading(
+          false,
+        );
       });
 
     return () => {
@@ -282,18 +329,25 @@ function App() {
     setLoginError("");
 
     try {
-      const user = await login({
-        login:
-          loginValue.trim(),
-        password,
-      });
+      const user =
+        await login({
+          login:
+            loginValue.trim(),
+
+          password,
+        });
 
       setCurrentUser(user);
+
       setAuthState(
         "authenticated",
       );
+
       setPassword("");
-      setBackendStatus("online");
+
+      setBackendStatus(
+        "online",
+      );
     } catch (error) {
       if (
         error instanceof ApiError &&
@@ -326,7 +380,10 @@ function App() {
       setCurrentUser(null);
       setDashboard(null);
       setSection("dashboard");
-      setAuthState("anonymous");
+
+      setAuthState(
+        "anonymous",
+      );
     }
   }
 
@@ -364,7 +421,8 @@ function App() {
 
 
   if (
-    authState === "anonymous"
+    authState ===
+    "anonymous"
   ) {
     return (
       <main className="auth-page">
@@ -402,7 +460,9 @@ function App() {
 
           <form
             className="login-form"
-            onSubmit={handleLogin}
+            onSubmit={
+              handleLogin
+            }
           >
             <label>
               <span>
@@ -415,7 +475,8 @@ function App() {
                 value={loginValue}
                 onChange={(event) => {
                   setLoginValue(
-                    event.target.value,
+                    event.target
+                      .value,
                   );
                 }}
               />
@@ -432,7 +493,8 @@ function App() {
                 value={password}
                 onChange={(event) => {
                   setPassword(
-                    event.target.value,
+                    event.target
+                      .value,
                   );
                 }}
               />
@@ -510,9 +572,11 @@ function App() {
 
         <nav className="sidebar-nav">
           <button
-            className={navClass(
-              "dashboard",
-            )}
+            className={
+              navClass(
+                "dashboard",
+              )
+            }
             onClick={() => {
               setSection(
                 "dashboard",
@@ -527,11 +591,15 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "clients",
-            )}
+            className={
+              navClass(
+                "clients",
+              )
+            }
             onClick={() => {
-              setSection("clients");
+              setSection(
+                "clients",
+              );
             }}
             type="button"
           >
@@ -540,11 +608,15 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "vehicles",
-            )}
+            className={
+              navClass(
+                "vehicles",
+              )
+            }
             onClick={() => {
-              setSection("vehicles");
+              setSection(
+                "vehicles",
+              );
             }}
             type="button"
           >
@@ -553,9 +625,11 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "appointments",
-            )}
+            className={
+              navClass(
+                "appointments",
+              )
+            }
             onClick={() => {
               setSection(
                 "appointments",
@@ -570,9 +644,11 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "workorders",
-            )}
+            className={
+              navClass(
+                "workorders",
+              )
+            }
             onClick={() => {
               setSection(
                 "workorders",
@@ -585,9 +661,11 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "notifications",
-            )}
+            className={
+              navClass(
+                "notifications",
+              )
+            }
             onClick={() => {
               setSection(
                 "notifications",
@@ -600,15 +678,21 @@ function App() {
           </button>
 
           <button
-            className={navClass(
-              "reports",
-            )}
+            className={
+              navClass(
+                "reports",
+              )
+            }
             onClick={() => {
-              setSection("reports");
+              setSection(
+                "reports",
+              );
             }}
             type="button"
           >
-            <FileText size={19} />
+            <FileText
+              size={19}
+            />
             Отчёты
           </button>
         </nav>
@@ -672,7 +756,8 @@ function App() {
             <div className="user-menu">
               <div className="user-chip">
                 {userInitials(
-                  currentUser?.login ??
+                  currentUser
+                    ?.login ??
                     "",
                 )}
               </div>
@@ -687,7 +772,8 @@ function App() {
 
                 <span>
                   {roleLabel(
-                    currentUser?.role ??
+                    currentUser
+                      ?.role ??
                       "",
                   )}
                 </span>
@@ -723,7 +809,9 @@ function App() {
                 title="Выйти"
                 type="button"
               >
-                <LogOut size={18} />
+                <LogOut
+                  size={18}
+                />
               </button>
             </div>
           </div>
@@ -833,21 +921,24 @@ function App() {
               />
 
               <DashboardVehicleStateCard
-                dashboard={dashboard}
+                dashboard={
+                  dashboard
+                }
               />
             </section>
           </>
         )}
 
 
-        {section === "clients" &&
+        {section ===
+          "clients" &&
           currentUser && (
-            <ClientsPage
-              currentUser={
-                currentUser
-              }
-            />
-          )}
+          <ClientsPage
+            currentUser={
+              currentUser
+            }
+          />
+        )}
 
 
         {section ===
@@ -863,23 +954,32 @@ function App() {
 
 
         {section ===
+          "workorders" &&
+          currentUser && (
+          <WorkOrdersPage
+            currentUser={
+              currentUser
+            }
+          />
+        )}
+
+
+        {section ===
           "settings" &&
           currentUser && (
-            <SettingsPage
-              currentUser={
-                currentUser
-              }
-              onUserChanged={
-                setCurrentUser
-              }
-            />
-          )}
+          <SettingsPage
+            currentUser={
+              currentUser
+            }
+            onUserChanged={
+              setCurrentUser
+            }
+          />
+        )}
 
 
         {(section ===
-          "workorders" ||
-          section ===
-            "notifications" ||
+          "notifications" ||
           section ===
             "reports") && (
           <section className="placeholder-page">
@@ -890,10 +990,9 @@ function App() {
             </h2>
 
             <p>
-              Backend для него уже
-              существует. Интерфейс
-              подключим следующим
-              широким блоком.
+              Backend уже существует.
+              Интерфейс подключим
+              следующим блоком.
             </p>
           </section>
         )}

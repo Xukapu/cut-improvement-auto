@@ -36,7 +36,12 @@ def list_work_items_for_order(
 def list_assignments_for_work(
     db: Session,
     work_item_id,
-) -> list[tuple[WorkItemAssignment, Employee]]:
+) -> list[
+    tuple[
+        WorkItemAssignment,
+        Employee,
+    ]
+]:
     rows = db.execute(
         select(
             WorkItemAssignment,
@@ -49,7 +54,6 @@ def list_assignments_for_work(
         .where(
             WorkItemAssignment.work_item_id == work_item_id,
             WorkItemAssignment.deleted_at.is_(None),
-            Employee.deleted_at.is_(None),
         )
         .order_by(Employee.employee_number.asc())
     ).all()
