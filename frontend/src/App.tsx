@@ -40,6 +40,7 @@ import {
 import {
   DashboardVehicleStateCard,
 } from "./components/DashboardVehicleStateCard";
+import { GlobalSearchModal } from "./components/GlobalSearchModal";
 import {
   AppointmentsPage,
 } from "./pages/AppointmentsPage";
@@ -191,6 +192,11 @@ function App() {
     loginError,
     setLoginError,
   ] = useState("");
+
+  const [
+    showGlobalSearch,
+    setShowGlobalSearch,
+  ] = useState(false);
 
   const reportDate =
     todayIso();
@@ -748,6 +754,11 @@ function App() {
           <div className="topbar-actions">
             <button
               className="search-button"
+              onClick={() => {
+                setShowGlobalSearch(
+                  true,
+                );
+              }}
               type="button"
             >
               <Search size={18} />
@@ -1001,6 +1012,35 @@ function App() {
 
 
 
+
+
+        {showGlobalSearch && (
+          <GlobalSearchModal
+            onClose={() => {
+              setShowGlobalSearch(
+                false,
+              );
+            }}
+            onOpenClients={() => {
+              setShowGlobalSearch(
+                false,
+              );
+
+              setSection(
+                "clients",
+              );
+            }}
+            onOpenVehicles={() => {
+              setShowGlobalSearch(
+                false,
+              );
+
+              setSection(
+                "vehicles",
+              );
+            }}
+          />
+        )}
       </main>
     </div>
   );
