@@ -2,16 +2,16 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
-from app.api.deps import (
-    DbSession,
-    StaffUser,
-)
+from app.api.deps import DbSession, StaffUser
 from app.schemas.sync import (
     SyncDeviceRegister,
     SyncDeviceResponse,
+    SyncPushOperation,
+    SyncPushResponse,
     SyncStatusResponse,
 )
 from app.services.sync import (
+    apply_sync_operation,
     get_sync_status,
     register_sync_device,
 )
@@ -53,4 +53,21 @@ def sync_status(
         db,
         user=current_user,
         device_key=device_key,
+    )
+
+
+@router.post(
+    "/push",
+    response_model=SyncPushResponse,
+    summary="Применить одну offline-операцию",
+)
+def push_operation(
+    payload: SyncPushOperation,
+    db: DbSession,
+    current_user: StaffUser,
+) -> SyncPushResponse:
+    return apply_sync_operation(
+        db,
+        user=current_user,
+        operation=payload,
     )

@@ -77,6 +77,7 @@ def build_appointment_response(
     license_plate: str,
 ) -> AppointmentResponse:
     return AppointmentResponse(
+        id=appointment.id,
         appointment_number=appointment.appointment_number,
         client_number=client_number,
         client_name=client_name,

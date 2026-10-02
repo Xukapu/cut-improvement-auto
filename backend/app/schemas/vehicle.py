@@ -1,21 +1,58 @@
 import re
 from datetime import date
+from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+)
 
 
 class VehicleBase(BaseModel):
-    license_plate: str = Field(min_length=1, max_length=32)
-    vin: str | None = Field(default=None, max_length=17)
-    brand: str = Field(min_length=1, max_length=100)
-    model: str = Field(min_length=1, max_length=100)
-    year: int | None = Field(default=None, ge=1886, le=2100)
-    mileage: int | None = Field(default=None, ge=0)
+    license_plate: str = Field(
+        min_length=1,
+        max_length=32,
+    )
+
+    vin: str | None = Field(
+        default=None,
+        max_length=17,
+    )
+
+    brand: str = Field(
+        min_length=1,
+        max_length=100,
+    )
+
+    model: str = Field(
+        min_length=1,
+        max_length=100,
+    )
+
+    year: int | None = Field(
+        default=None,
+        ge=1886,
+        le=2100,
+    )
+
+    mileage: int | None = Field(
+        default=None,
+        ge=0,
+    )
 
     @field_validator("license_plate")
     @classmethod
-    def normalize_license_plate(cls, value: str) -> str:
-        value = re.sub(r"\s+", "", value.strip().upper())
+    def normalize_license_plate(
+        cls,
+        value: str,
+    ) -> str:
+        value = re.sub(
+            r"\s+",
+            "",
+            value.strip().upper(),
+        )
 
         if not value:
             raise ValueError("Госномер не может быть пустым.")
@@ -24,7 +61,10 @@ class VehicleBase(BaseModel):
 
     @field_validator("vin")
     @classmethod
-    def normalize_vin(cls, value: str | None) -> str | None:
+    def normalize_vin(
+        cls,
+        value: str | None,
+    ) -> str | None:
         if value is None:
             return None
 
@@ -33,14 +73,23 @@ class VehicleBase(BaseModel):
         if not value:
             return None
 
-        if not re.fullmatch(r"[A-HJ-NPR-Z0-9]{17}", value):
+        if not re.fullmatch(
+            r"[A-HJ-NPR-Z0-9]{17}",
+            value,
+        ):
             raise ValueError("VIN должен содержать 17 символов и не может содержать I, O или Q.")
 
         return value
 
-    @field_validator("brand", "model")
+    @field_validator(
+        "brand",
+        "model",
+    )
     @classmethod
-    def strip_text(cls, value: str) -> str:
+    def strip_text(
+        cls,
+        value: str,
+    ) -> str:
         value = value.strip()
 
         if not value:
@@ -64,7 +113,9 @@ class TransferVehicleRequest(BaseModel):
 class VehicleResponse(VehicleBase):
     model_config = ConfigDict(from_attributes=True)
 
+    id: UUID
     vehicle_number: int
+
     current_owner_client_number: int
     current_owner_name: str
 

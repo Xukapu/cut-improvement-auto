@@ -28,6 +28,7 @@ def build_vehicle_response(
     owner_name: str,
 ) -> VehicleResponse:
     return VehicleResponse(
+        id=vehicle.id,
         vehicle_number=vehicle.vehicle_number,
         license_plate=vehicle.license_plate,
         vin=vehicle.vin,

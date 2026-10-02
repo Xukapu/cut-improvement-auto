@@ -1,6 +1,12 @@
 from datetime import date, time
+from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+)
 
 from app.models.appointment import AppointmentStatus
 
@@ -26,7 +32,10 @@ class AppointmentWrite(BaseModel):
 
     @field_validator("reason")
     @classmethod
-    def normalize_reason(cls, value: str) -> str:
+    def normalize_reason(
+        cls,
+        value: str,
+    ) -> str:
         value = value.strip()
 
         if not value:
@@ -58,6 +67,7 @@ class AppointmentUpdate(AppointmentWrite):
 class AppointmentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: UUID
     appointment_number: int
 
     client_number: int

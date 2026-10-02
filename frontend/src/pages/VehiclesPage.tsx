@@ -5,28 +5,40 @@ import {
   Search,
   UserRoundCog,
 } from "lucide-react";
+
 import {
+  useCallback,
   useEffect,
   useState,
 } from "react";
-import type { FormEvent } from "react";
 
-import { ApiError } from "../api/client";
+import type {
+  FormEvent,
+} from "react";
+
+import {
+  ApiError,
+} from "../api/client";
+
 import {
   listClients,
 } from "../api/clients";
+
 import {
   createVehicle,
   listVehicles,
   transferVehicle,
   updateVehicle,
 } from "../api/vehicles";
+
 import type {
   Client,
 } from "../types/client";
+
 import type {
   Vehicle,
 } from "../types/vehicle";
+
 
 type FormState = {
   license_plate: string;
@@ -35,8 +47,10 @@ type FormState = {
   model: string;
   year: string;
   mileage: string;
-  owner_client_number: string;
+
+  owner_client_id: string;
 };
+
 
 const emptyForm: FormState = {
   license_plate: "",
@@ -45,8 +59,10 @@ const emptyForm: FormState = {
   model: "",
   year: "",
   mileage: "",
-  owner_client_number: "",
+
+  owner_client_id: "",
 };
+
 
 function getError(
   error: unknown,
@@ -55,6 +71,25 @@ function getError(
     ? error.message
     : "Произошла ошибка.";
 }
+
+
+function vehicleNumberLabel(
+  vehicle: Vehicle,
+): string {
+  return vehicle.sync_pending
+    ? "Ожидает синхронизации"
+    : `№${vehicle.vehicle_number}`;
+}
+
+
+function clientLabel(
+  client: Client,
+): string {
+  return client.sync_pending
+    ? `${client.full_name} · ожидает синхронизации`
+    : `№${client.client_number} · ${client.full_name}`;
+}
+
 
 export function VehiclesPage() {
   const [
@@ -70,28 +105,48 @@ export function VehiclesPage() {
   const [
     selected,
     setSelected,
-  ] = useState<Vehicle | null>(null);
+  ] = useState<Vehicle | null>(
+    null,
+  );
 
-  const [search, setSearch] =
-    useState("");
+  const [
+    search,
+    setSearch,
+  ] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
 
-  const [formOpen, setFormOpen] =
-    useState(false);
+  const [
+    formOpen,
+    setFormOpen,
+  ] = useState(false);
 
-  const [editing, setEditing] =
-    useState<Vehicle | null>(null);
+  const [
+    editing,
+    setEditing,
+  ] = useState<Vehicle | null>(
+    null,
+  );
 
-  const [saving, setSaving] =
-    useState(false);
+  const [
+    saving,
+    setSaving,
+  ] = useState(false);
 
-  const [form, setForm] =
-    useState<FormState>(emptyForm);
+  const [
+    form,
+    setForm,
+  ] = useState<FormState>(
+    emptyForm,
+  );
 
   const [
     transferOpen,
@@ -103,116 +158,188 @@ export function VehiclesPage() {
     setNewOwnerNumber,
   ] = useState("");
 
-  async function refresh() {
-    const [vehicleData, clientData] =
-      await Promise.all([
-        listVehicles(search),
-        listClients("", 100),
-      ]);
 
-    setItems(vehicleData.items);
-    setClients(clientData.items);
-  }
+  const refresh =
+    useCallback(
+      async () => {
+        const [
+          vehicleData,
+          clientData,
+        ] = await Promise.all([
+          listVehicles(
+            search,
+          ),
+
+          listClients(
+            "",
+            100,
+          ),
+        ]);
+
+        setItems(
+          vehicleData.items,
+        );
+
+        setClients(
+          clientData.items,
+        );
+
+        setSelected(
+          (current) => {
+            if (!current) {
+              return null;
+            }
+
+            return (
+              vehicleData.items.find(
+                (vehicle) =>
+                  vehicle.id ===
+                  current.id,
+              ) ??
+              current
+            );
+          },
+        );
+
+        setError("");
+        setLoading(false);
+      },
+      [
+        search,
+      ],
+    );
+
 
   useEffect(() => {
-    let active = true;
-
     const timer =
       window.setTimeout(
-        async () => {
-          try {
-            const [
-              vehicleData,
-              clientData,
-            ] = await Promise.all([
-              listVehicles(search),
-              listClients("", 100),
-            ]);
+        () => {
+          void refresh().catch(
+            (loadError) => {
+              setError(
+                getError(
+                  loadError,
+                ),
+              );
 
-            if (!active) {
-              return;
-            }
-
-            setItems(
-              vehicleData.items,
-            );
-
-            setClients(
-              clientData.items,
-            );
-
-            setError("");
-            setLoading(false);
-          } catch (loadError) {
-            if (!active) {
-              return;
-            }
-
-            setError(
-              getError(loadError),
-            );
-            setLoading(false);
-          }
+              setLoading(
+                false,
+              );
+            },
+          );
         },
         200,
       );
 
     return () => {
-      active = false;
-      window.clearTimeout(timer);
+      window.clearTimeout(
+        timer,
+      );
     };
-  }, [search]);
+  }, [
+    refresh,
+  ]);
+
+
+  useEffect(() => {
+    function handleSyncCompleted() {
+      void refresh().catch(
+        (loadError) => {
+          setError(
+            getError(
+              loadError,
+            ),
+          );
+        },
+      );
+    }
+
+    window.addEventListener(
+      "cut-sync-completed",
+      handleSyncCompleted,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "cut-sync-completed",
+        handleSyncCompleted,
+      );
+    };
+  }, [
+    refresh,
+  ]);
+
 
   function openCreate() {
     setEditing(null);
 
     setForm({
       ...emptyForm,
-      owner_client_number:
-        clients[0]
-          ? String(
-              clients[0]
-                .client_number,
-            )
-          : "",
+
+      owner_client_id:
+        clients[0]?.id ??
+        "",
     });
 
     setFormOpen(true);
   }
 
+
   function openEdit(
     vehicle: Vehicle,
   ) {
-    setEditing(vehicle);
+    if (vehicle.sync_pending) {
+      return;
+    }
+
+    setEditing(
+      vehicle,
+    );
+
+    const owner =
+      clients.find(
+        (client) =>
+          client.client_number ===
+          vehicle
+            .current_owner_client_number,
+      );
 
     setForm({
       license_plate:
         vehicle.license_plate,
+
       vin:
-        vehicle.vin ?? "",
+        vehicle.vin ??
+        "",
+
       brand:
         vehicle.brand,
+
       model:
         vehicle.model,
+
       year:
         vehicle.year !== null
-          ? String(vehicle.year)
+          ? String(
+              vehicle.year,
+            )
           : "",
+
       mileage:
         vehicle.mileage !== null
           ? String(
               vehicle.mileage,
             )
           : "",
-      owner_client_number:
-        String(
-          vehicle
-            .current_owner_client_number,
-        ),
+
+      owner_client_id:
+        owner?.id ??
+        "",
     });
 
     setFormOpen(true);
   }
+
 
   async function submit(
     event: FormEvent,
@@ -222,80 +349,162 @@ export function VehiclesPage() {
     setSaving(true);
     setError("");
 
+
     const base = {
       license_plate:
-        form.license_plate.trim(),
+        form.license_plate
+          .trim(),
+
       vin:
         form.vin.trim() ||
         null,
+
       brand:
         form.brand.trim(),
+
       model:
         form.model.trim(),
+
       year:
         form.year
-          ? Number(form.year)
+          ? Number(
+              form.year,
+            )
           : null,
+
       mileage:
         form.mileage
-          ? Number(form.mileage)
+          ? Number(
+              form.mileage,
+            )
           : null,
     };
 
-    try {
-      const result = editing
-        ? await updateVehicle(
-            editing.vehicle_number,
-            base,
-          )
-        : await createVehicle({
-            ...base,
-            owner_client_number:
-              Number(
-                form
-                  .owner_client_number,
-              ),
-          });
 
-      setSelected(result);
-      setFormOpen(false);
+    try {
+      let result:
+        Vehicle;
+
+
+      if (editing) {
+        result =
+          await updateVehicle(
+            editing
+              .vehicle_number,
+
+            base,
+          );
+      } else {
+        const owner =
+          clients.find(
+            (client) =>
+              client.id ===
+              form
+                .owner_client_id,
+          );
+
+        if (!owner) {
+          throw new ApiError(
+            0,
+            "Выберите владельца автомобиля.",
+          );
+        }
+
+
+        result =
+          await createVehicle({
+            ...base,
+
+            owner_client_id:
+              owner.id,
+
+            owner_client_number:
+              owner.sync_pending
+                ? null
+                : owner
+                    .client_number,
+
+            owner_client_name:
+              owner.full_name,
+          });
+      }
+
+
+      setSelected(
+        result,
+      );
+
+      setFormOpen(
+        false,
+      );
 
       await refresh();
     } catch (saveError) {
       setError(
-        getError(saveError),
+        getError(
+          saveError,
+        ),
       );
     } finally {
-      setSaving(false);
+      setSaving(
+        false,
+      );
     }
   }
+
 
   async function doTransfer() {
     if (
       !selected ||
+      selected.sync_pending ||
       !newOwnerNumber
     ) {
       return;
     }
 
+
     try {
       const result =
         await transferVehicle(
-          selected.vehicle_number,
-          Number(newOwnerNumber),
+          selected
+            .vehicle_number,
+
+          Number(
+            newOwnerNumber,
+          ),
         );
 
-      setSelected(result);
-      setTransferOpen(false);
-      setNewOwnerNumber("");
+      setSelected(
+        result,
+      );
+
+      setTransferOpen(
+        false,
+      );
+
+      setNewOwnerNumber(
+        "",
+      );
 
       await refresh();
     } catch (transferError) {
       setError(
-        getError(transferError),
+        getError(
+          transferError,
+        ),
       );
     }
   }
+
+
+  const transferableClients =
+    clients.filter(
+      (client) =>
+        !client.sync_pending &&
+        client.client_number >
+          0,
+    );
+
 
   return (
     <section className="data-page">
@@ -304,8 +513,7 @@ export function VehiclesPage() {
           <Search size={17} />
 
           <input
-            placeholder=
-              "Госномер, VIN, марка или модель"
+            placeholder="Госномер, VIN, марка или модель"
             value={search}
             onChange={(event) => {
               setSearch(
@@ -316,12 +524,14 @@ export function VehiclesPage() {
         </div>
 
         <button
-          className=
-            "primary-inline-button"
+          className="primary-inline-button"
           disabled={
-            clients.length === 0
+            clients.length ===
+            0
           }
-          onClick={openCreate}
+          onClick={
+            openCreate
+          }
           type="button"
         >
           <Plus size={17} />
@@ -329,11 +539,13 @@ export function VehiclesPage() {
         </button>
       </div>
 
+
       {error && (
         <div className="dashboard-error">
           {error}
         </div>
       )}
+
 
       <div className="master-detail">
         <div className="data-card">
@@ -353,18 +565,19 @@ export function VehiclesPage() {
             </strong>
           </div>
 
+
           {loading ? (
             <div className="empty-state">
               Загружаем...
             </div>
-          ) : items.length === 0 ? (
+          ) : items.length ===
+            0 ? (
             <div className="empty-state">
               <Car size={28} />
 
               <div>
                 <strong>
-                  Автомобили
-                  не найдены
+                  Автомобили не найдены
                 </strong>
               </div>
             </div>
@@ -375,26 +588,25 @@ export function VehiclesPage() {
                   <button
                     className={
                       selected
-                        ?.vehicle_number ===
-                      vehicle.vehicle_number
+                        ?.id ===
+                      vehicle.id
                         ? "data-row data-row-active"
                         : "data-row"
                     }
                     key={
-                      vehicle
-                        .vehicle_number
+                      vehicle.id
                     }
                     onClick={() => {
-                      setSelected(vehicle);
+                      setSelected(
+                        vehicle,
+                      );
                     }}
                     type="button"
                   >
                     <span className="row-number">
-                      №
-                      {
-                        vehicle
-                          .vehicle_number
-                      }
+                      {vehicleNumberLabel(
+                        vehicle,
+                      )}
                     </span>
 
                     <span className="row-primary">
@@ -426,6 +638,7 @@ export function VehiclesPage() {
           )}
         </div>
 
+
         <div className="detail-card">
           {!selected ? (
             <div className="detail-empty">
@@ -436,8 +649,7 @@ export function VehiclesPage() {
               </strong>
 
               <span>
-                Здесь откроется его
-                карточка.
+                Здесь откроется его карточка.
               </span>
             </div>
           ) : (
@@ -445,11 +657,10 @@ export function VehiclesPage() {
               <div className="detail-header">
                 <div>
                   <span className="card-kicker">
-                    Автомобиль №
-                    {
-                      selected
-                        .vehicle_number
-                    }
+                    Автомобиль{" "}
+                    {vehicleNumberLabel(
+                      selected,
+                    )}
                   </span>
 
                   <h2>
@@ -459,10 +670,17 @@ export function VehiclesPage() {
                 </div>
 
                 <button
-                  className=
-                    "icon-action"
+                  className="icon-action"
+                  disabled={
+                    Boolean(
+                      selected
+                        .sync_pending,
+                    )
+                  }
                   onClick={() => {
-                    openEdit(selected);
+                    openEdit(
+                      selected,
+                    );
                   }}
                   title="Изменить"
                   type="button"
@@ -470,6 +688,7 @@ export function VehiclesPage() {
                   <Edit3 size={18} />
                 </button>
               </div>
+
 
               <dl className="detail-grid">
                 <div>
@@ -531,20 +750,29 @@ export function VehiclesPage() {
                     {
                       selected
                         .current_owner_name
-                    }{" "}
-                    · Клиент №
-                    {
-                      selected
-                        .current_owner_client_number
                     }
+
+                    {" · "}
+
+                    {selected
+                      .current_owner_client_number >
+                    0
+                      ? `Клиент №${selected.current_owner_client_number}`
+                      : "ожидает синхронизации"}
                   </dd>
                 </div>
               </dl>
 
+
               <div className="detail-actions">
                 <button
-                  className=
-                    "secondary-button"
+                  className="secondary-button"
+                  disabled={
+                    Boolean(
+                      selected
+                        .sync_pending,
+                    )
+                  }
                   onClick={() => {
                     setNewOwnerNumber(
                       String(
@@ -570,11 +798,14 @@ export function VehiclesPage() {
         </div>
       </div>
 
+
       {formOpen && (
         <div className="modal-backdrop">
           <form
             className="modal-card"
-            onSubmit={submit}
+            onSubmit={
+              submit
+            }
           >
             <div className="modal-header">
               <span className="card-kicker">
@@ -590,6 +821,7 @@ export function VehiclesPage() {
               </h2>
             </div>
 
+
             <div className="form-grid">
               <label>
                 <span>
@@ -598,16 +830,21 @@ export function VehiclesPage() {
 
                 <input
                   required
-                  value={form.brand}
+                  value={
+                    form.brand
+                  }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       brand:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               <label>
                 <span>
@@ -616,16 +853,21 @@ export function VehiclesPage() {
 
                 <input
                   required
-                  value={form.model}
+                  value={
+                    form.model
+                  }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       model:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               <label>
                 <span>
@@ -635,17 +877,21 @@ export function VehiclesPage() {
                 <input
                   required
                   value={
-                    form.license_plate
+                    form
+                      .license_plate
                   }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       license_plate:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               <label>
                 <span>
@@ -653,16 +899,21 @@ export function VehiclesPage() {
                 </span>
 
                 <input
-                  value={form.vin}
+                  value={
+                    form.vin
+                  }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       vin:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               <label>
                 <span>
@@ -673,16 +924,21 @@ export function VehiclesPage() {
                   min="1900"
                   max="2100"
                   type="number"
-                  value={form.year}
+                  value={
+                    form.year
+                  }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       year:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               <label>
                 <span>
@@ -692,16 +948,21 @@ export function VehiclesPage() {
                 <input
                   min="0"
                   type="number"
-                  value={form.mileage}
+                  value={
+                    form.mileage
+                  }
                   onChange={(event) => {
                     setForm({
                       ...form,
+
                       mileage:
-                        event.target.value,
+                        event.target
+                          .value,
                     });
                   }}
                 />
               </label>
+
 
               {!editing && (
                 <label className="form-wide">
@@ -713,12 +974,13 @@ export function VehiclesPage() {
                     required
                     value={
                       form
-                        .owner_client_number
+                        .owner_client_id
                     }
                     onChange={(event) => {
                       setForm({
                         ...form,
-                        owner_client_number:
+
+                        owner_client_id:
                           event.target
                             .value,
                       });
@@ -728,24 +990,15 @@ export function VehiclesPage() {
                       (client) => (
                         <option
                           key={
-                            client
-                              .client_number
+                            client.id
                           }
                           value={
-                            client
-                              .client_number
+                            client.id
                           }
                         >
-                          №
-                          {
-                            client
-                              .client_number
-                          }{" "}
-                          ·{" "}
-                          {
-                            client
-                              .full_name
-                          }
+                          {clientLabel(
+                            client,
+                          )}
                         </option>
                       ),
                     )}
@@ -754,12 +1007,14 @@ export function VehiclesPage() {
               )}
             </div>
 
+
             <div className="modal-actions">
               <button
-                className=
-                  "secondary-button"
+                className="secondary-button"
                 onClick={() => {
-                  setFormOpen(false);
+                  setFormOpen(
+                    false,
+                  );
                 }}
                 type="button"
               >
@@ -767,9 +1022,10 @@ export function VehiclesPage() {
               </button>
 
               <button
-                className=
-                  "primary-inline-button"
-                disabled={saving}
+                className="primary-inline-button"
+                disabled={
+                  saving
+                }
                 type="submit"
               >
                 {saving
@@ -781,12 +1037,11 @@ export function VehiclesPage() {
         </div>
       )}
 
+
       {transferOpen &&
         selected && (
           <div className="modal-backdrop">
-            <div className=
-              "modal-card modal-small"
-            >
+            <div className="modal-card modal-small">
               <div className="modal-header">
                 <span className="card-kicker">
                   {
@@ -811,16 +1066,16 @@ export function VehiclesPage() {
                   }
                   onChange={(event) => {
                     setNewOwnerNumber(
-                      event.target.value,
+                      event.target
+                        .value,
                     );
                   }}
                 >
-                  {clients.map(
+                  {transferableClients.map(
                     (client) => (
                       <option
                         key={
-                          client
-                            .client_number
+                          client.id
                         }
                         value={
                           client
@@ -834,7 +1089,8 @@ export function VehiclesPage() {
                         }{" "}
                         ·{" "}
                         {
-                          client.full_name
+                          client
+                            .full_name
                         }
                       </option>
                     ),
@@ -844,8 +1100,7 @@ export function VehiclesPage() {
 
               <div className="modal-actions">
                 <button
-                  className=
-                    "secondary-button"
+                  className="secondary-button"
                   onClick={() => {
                     setTransferOpen(
                       false,
@@ -857,8 +1112,11 @@ export function VehiclesPage() {
                 </button>
 
                 <button
-                  className=
-                    "primary-inline-button"
+                  className="primary-inline-button"
+                  disabled={
+                    transferableClients
+                      .length === 0
+                  }
                   onClick={() => {
                     void doTransfer();
                   }}

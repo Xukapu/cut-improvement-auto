@@ -4,6 +4,8 @@ import {
 
 import type {
   SyncDevice,
+  SyncPushResponse,
+  SyncQueuedOperation,
   SyncStatus,
 } from "../types/sync";
 
@@ -12,7 +14,7 @@ const DEVICE_KEY =
   "cut-sync-device-key-v1";
 
 
-function createUuid():
+export function createSyncUuid():
   string {
   if (
     typeof crypto
@@ -73,7 +75,7 @@ export function getDeviceKey():
   }
 
   const created =
-    createUuid();
+    createSyncUuid();
 
   localStorage.setItem(
     DEVICE_KEY,
@@ -144,6 +146,39 @@ export function getSyncStatus():
     {
       offlineCache:
         false,
+    },
+  );
+}
+
+
+export function pushSyncOperation(
+  operation:
+    SyncQueuedOperation,
+): Promise<SyncPushResponse> {
+  return apiRequest<SyncPushResponse>(
+    "/api/v1/sync/push",
+    {
+      method: "POST",
+
+      offlineCache:
+        false,
+
+      body: JSON.stringify({
+        operation_id:
+          operation.operation_id,
+
+        device_key:
+          operation.device_key,
+
+        entity_id:
+          operation.entity_id,
+
+        kind:
+          operation.kind,
+
+        payload:
+          operation.payload,
+      }),
     },
   );
 }

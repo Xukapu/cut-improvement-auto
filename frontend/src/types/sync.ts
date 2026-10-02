@@ -21,3 +21,50 @@ export type SyncStatus = {
     | SyncDevice
     | null;
 };
+
+
+export type SyncOperationKind =
+  | "client.create"
+  | "vehicle.create"
+  | "appointment.create";
+
+
+export type SyncQueuedOperation = {
+  operation_id: string;
+  device_key: string;
+  entity_id: string;
+
+  kind: SyncOperationKind;
+
+  payload:
+    Record<string, unknown>;
+
+  created_at: number;
+
+  attempts: number;
+
+  last_error:
+    | string
+    | null;
+};
+
+
+export type SyncPushResponse = {
+  operation_id: string;
+  entity_id: string;
+
+  kind: SyncOperationKind;
+
+  result_number: number;
+
+  replayed: boolean;
+
+  server_time: string;
+};
+
+
+export type SyncFlushResult = {
+  synced: number;
+  failed: number;
+  pending: number;
+};

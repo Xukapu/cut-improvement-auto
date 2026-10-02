@@ -519,7 +519,7 @@ export async function apiRequest<T>(
     );
 
     emitServerState(
-      true,
+      response.status < 500,
     );
   } catch {
     emitServerState(

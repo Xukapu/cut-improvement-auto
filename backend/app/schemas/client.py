@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Literal, Self
+from uuid import UUID
 
 from pydantic import (
     BaseModel,
@@ -26,14 +27,20 @@ class ClientWrite(BaseModel):
         ge=1,
     )
 
-    notes: str | None = Field(default=None, max_length=2000)
+    notes: str | None = Field(
+        default=None,
+        max_length=2000,
+    )
 
     @field_validator(
         "full_name",
         "phone_primary",
     )
     @classmethod
-    def strip_required_text(cls, value: str) -> str:
+    def strip_required_text(
+        cls,
+        value: str,
+    ) -> str:
         value = value.strip()
 
         if not value:
@@ -46,7 +53,10 @@ class ClientWrite(BaseModel):
         "notes",
     )
     @classmethod
-    def strip_optional_text(cls, value: str | None) -> str | None:
+    def strip_optional_text(
+        cls,
+        value: str | None,
+    ) -> str | None:
         if value is None:
             return None
 
@@ -85,6 +95,7 @@ class ClientInternalMarkUpdate(BaseModel):
 class ClientResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: UUID
     client_number: int
 
     full_name: str
@@ -126,6 +137,7 @@ class ArchivedClientListResponse(BaseModel):
 class ArchiveClientRequest(BaseModel):
     confirm: Literal[True]
     reason: ArchiveReason
+
     comment: str | None = Field(
         default=None,
         max_length=1000,
@@ -133,7 +145,10 @@ class ArchiveClientRequest(BaseModel):
 
     @field_validator("comment")
     @classmethod
-    def strip_comment(cls, value: str | None) -> str | None:
+    def strip_comment(
+        cls,
+        value: str | None,
+    ) -> str | None:
         if value is None:
             return None
 

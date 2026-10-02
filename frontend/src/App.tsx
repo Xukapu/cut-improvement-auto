@@ -247,6 +247,36 @@ function App() {
       });
   }, []);
 
+  // cut-server-state-app
+  useEffect(() => {
+    function handleServerState(
+      event: Event,
+    ) {
+      const custom =
+        event as CustomEvent<{
+          online: boolean;
+        }>;
+
+      setBackendStatus(
+        custom.detail.online
+          ? "online"
+          : "offline",
+      );
+    }
+
+    window.addEventListener(
+      "cut-server-state",
+      handleServerState,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "cut-server-state",
+        handleServerState,
+      );
+    };
+  }, []);
+
 
   useEffect(() => {
     getCurrentUser()

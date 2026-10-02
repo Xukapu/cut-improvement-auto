@@ -82,6 +82,15 @@ function getError(
     ? error.message
     : "Произошла ошибка.";
 }
+function clientNumberLabel(
+  client:
+    | Client
+    | ArchivedClient,
+): string {
+  return client.sync_pending
+    ? "Ожидает синхронизации"
+    : `№${client.client_number}`;
+}
 
 export function ClientsPage({
   currentUser,
@@ -182,8 +191,10 @@ export function ClientsPage({
   ] = useState(false);
 
   const selectedClientNumber =
-    selected?.client_number ??
-    null;
+    selected?.sync_pending
+      ? null
+      : selected?.client_number ??
+        null;
 
 
   // ----------------------------------------------------------
@@ -376,6 +387,24 @@ export function ClientsPage({
     );
   }
 
+
+  useEffect(() => {
+    function handleSyncCompleted() {
+      void refresh();
+    }
+
+    window.addEventListener(
+      "cut-sync-completed",
+      handleSyncCompleted,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "cut-sync-completed",
+        handleSyncCompleted,
+      );
+    };
+  });
 
   function openCreate() {
     setEditing(null);
@@ -737,17 +766,11 @@ export function ClientsPage({
                 (client) => (
                   <button
                     className={
-                      selected
-                        ?.client_number ===
-                      client
-                        .client_number
+                      selected?.id === client.id
                         ? "data-row data-row-active"
                         : "data-row"
                     }
-                    key={
-                      client
-                        .client_number
-                    }
+                    key={client.id}
                     onClick={() => {
                       setClientVehicles(
                         [],
@@ -762,11 +785,9 @@ export function ClientsPage({
                     <span className=
                       "row-number"
                     >
-                      №
-                      {
-                        client
-                          .client_number
-                      }
+                      {clientNumberLabel(
+                        client,
+                      )}
                     </span>
 
                     <span className=
@@ -841,11 +862,10 @@ export function ClientsPage({
                   <span className=
                     "card-kicker"
                   >
-                    Клиент №
-                    {
-                      selected
-                        .client_number
-                    }
+                    Клиент{" "}
+                    {clientNumberLabel(
+                      selected,
+                    )}
                   </span>
 
                   <h2>
@@ -872,7 +892,7 @@ export function ClientsPage({
                   <button
                     className=
                       "icon-action"
-                    onClick={() => {
+                    disabled={selected.sync_pending}onClick={() => {
                       openEdit(
                         selected as Client,
                       );
@@ -1021,7 +1041,7 @@ export function ClientsPage({
                     <button
                       className=
                         "danger-button"
-                      onClick={() => {
+                      disabled={selected.sync_pending}onClick={() => {
                         setArchiveOpen(
                           true,
                         );
@@ -1040,7 +1060,7 @@ export function ClientsPage({
                       <button
                         className=
                           "internal-mark-action"
-                        onClick={() => {
+                        disabled={selected.sync_pending}onClick={() => {
                           void toggleMark(
                             selected as Client,
                           );
@@ -1299,10 +1319,7 @@ export function ClientsPage({
                               client,
                             ) => (
                               <button
-                                key={
-                                  client
-                                    .client_number
-                                }
+                                key={client.id}
                                 onClick={() => {
                                   setForm({
                                     ...form,
@@ -1432,11 +1449,10 @@ export function ClientsPage({
                 <span className=
                   "card-kicker"
                 >
-                  Клиент №
-                  {
-                    selected
-                      .client_number
-                  }
+                  Клиент{" "}
+                    {clientNumberLabel(
+                      selected,
+                    )}
                 </span>
 
                 <h2>
@@ -1539,7 +1555,7 @@ export function ClientsPage({
                 <button
                   className=
                     "danger-button"
-                  onClick={() => {
+                  disabled={selected.sync_pending}onClick={() => {
                     void confirmArchive();
                   }}
                   type="button"

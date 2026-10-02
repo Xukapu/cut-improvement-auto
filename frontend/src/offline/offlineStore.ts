@@ -2,14 +2,21 @@ import type {
   CurrentUser,
 } from "../types/auth";
 
+import type {
+  SyncQueuedOperation,
+} from "../types/sync";
+
 
 const DB_NAME =
   "cut-improvement-auto-offline";
 
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const RESPONSE_STORE =
   "api-responses";
+
+const OPERATION_STORE =
+  "sync-operations";
 
 const OFFLINE_SESSION_KEY =
   "cut-offline-session-v1";
@@ -27,6 +34,13 @@ type CachedResponse = {
 };
 
 
+type StoredSyncOperation =
+  SyncQueuedOperation & {
+    key: string;
+    userId: string;
+  };
+
+
 type OfflineSession = {
   user: CurrentUser;
   savedAt: number;
@@ -35,6 +49,11 @@ type OfflineSession = {
 
 export type NetworkStateDetail = {
   online: boolean;
+};
+
+
+export type SyncQueueStateDetail = {
+  pending: number;
 };
 
 
@@ -68,6 +87,20 @@ function openDatabase():
           ) {
             db.createObjectStore(
               RESPONSE_STORE,
+              {
+                keyPath: "key",
+              },
+            );
+          }
+
+          if (
+            !db.objectStoreNames
+              .contains(
+                OPERATION_STORE,
+              )
+          ) {
+            db.createObjectStore(
+              OPERATION_STORE,
               {
                 keyPath: "key",
               },
@@ -159,11 +192,27 @@ function cacheKey(
 }
 
 
+function operationKey(
+  userId: string,
+  operationId: string,
+): string {
+  return (
+    `${userId}:${operationId}`
+  );
+}
+
+
 export function setOfflineUserId(
   userId:
     string | null,
 ): void {
   activeUserId = userId;
+}
+
+
+export function getOfflineUserId():
+  string | null {
+  return activeUserId;
 }
 
 
@@ -176,6 +225,24 @@ export function emitServerState(
       {
         detail: {
           online,
+        },
+      },
+    ),
+  );
+}
+
+
+async function emitQueueState():
+  Promise<void> {
+  const pending =
+    await getPendingSyncCount();
+
+  window.dispatchEvent(
+    new CustomEvent<SyncQueueStateDetail>(
+      "cut-sync-queue-state",
+      {
+        detail: {
+          pending,
         },
       },
     ),
@@ -229,7 +296,7 @@ export async function cacheApiResponse(
 
     db.close();
   } catch {
-    // Кэш не должен ломать основной запрос.
+    // Локальный кэш не должен ломать основной запрос.
   }
 }
 
@@ -300,6 +367,215 @@ export async function getCachedApiResponse<T>(
       found: false,
     };
   }
+}
+
+
+export async function enqueueSyncOperation(
+  operation:
+    SyncQueuedOperation,
+): Promise<void> {
+  if (!activeUserId) {
+    throw new Error(
+      "Нет активного пользователя для offline-очереди.",
+    );
+  }
+
+  const db =
+    await openDatabase();
+
+  const transaction =
+    db.transaction(
+      OPERATION_STORE,
+      "readwrite",
+    );
+
+  const store =
+    transaction.objectStore(
+      OPERATION_STORE,
+    );
+
+  const stored:
+    StoredSyncOperation = {
+      ...operation,
+
+      key: operationKey(
+        activeUserId,
+        operation.operation_id,
+      ),
+
+      userId:
+        activeUserId,
+  };
+
+  store.put(stored);
+
+  await transactionDone(
+    transaction,
+  );
+
+  db.close();
+
+  await emitQueueState();
+}
+
+
+export async function listPendingSyncOperations():
+  Promise<SyncQueuedOperation[]> {
+  if (!activeUserId) {
+    return [];
+  }
+
+  const db =
+    await openDatabase();
+
+  const transaction =
+    db.transaction(
+      OPERATION_STORE,
+      "readonly",
+    );
+
+  const store =
+    transaction.objectStore(
+      OPERATION_STORE,
+    );
+
+  const items =
+    await requestResult<
+      StoredSyncOperation[]
+    >(
+      store.getAll(),
+    );
+
+  await transactionDone(
+    transaction,
+  );
+
+  db.close();
+
+  return items
+    .filter(
+      (item) =>
+        item.userId ===
+        activeUserId,
+    )
+    .sort(
+      (
+        left,
+        right,
+      ) =>
+        left.created_at -
+        right.created_at,
+    )
+    .map(
+      ({
+        key: _key,
+        userId: _userId,
+        ...operation
+      }) => operation,
+    );
+}
+
+
+export async function getPendingSyncCount():
+  Promise<number> {
+  const items =
+    await listPendingSyncOperations();
+
+  return items.length;
+}
+
+
+export async function removeSyncOperation(
+  operationId: string,
+): Promise<void> {
+  if (!activeUserId) {
+    return;
+  }
+
+  const db =
+    await openDatabase();
+
+  const transaction =
+    db.transaction(
+      OPERATION_STORE,
+      "readwrite",
+    );
+
+  transaction
+    .objectStore(
+      OPERATION_STORE,
+    )
+    .delete(
+      operationKey(
+        activeUserId,
+        operationId,
+      ),
+    );
+
+  await transactionDone(
+    transaction,
+  );
+
+  db.close();
+
+  await emitQueueState();
+}
+
+
+export async function updateSyncOperationError(
+  operationId: string,
+  errorMessage: string,
+): Promise<void> {
+  if (!activeUserId) {
+    return;
+  }
+
+  const db =
+    await openDatabase();
+
+  const transaction =
+    db.transaction(
+      OPERATION_STORE,
+      "readwrite",
+    );
+
+  const store =
+    transaction.objectStore(
+      OPERATION_STORE,
+    );
+
+  const key =
+    operationKey(
+      activeUserId,
+      operationId,
+    );
+
+  const item =
+    await requestResult<
+      StoredSyncOperation | undefined
+    >(
+      store.get(key),
+    );
+
+  if (item) {
+    store.put({
+      ...item,
+
+      attempts:
+        item.attempts + 1,
+
+      last_error:
+        errorMessage,
+    });
+  }
+
+  await transactionDone(
+    transaction,
+  );
+
+  db.close();
+
+  await emitQueueState();
 }
 
 
@@ -380,33 +656,58 @@ export function loadOfflineSession():
 
 export async function clearOfflineData():
   Promise<void> {
+  const userId =
+    activeUserId;
+
   activeUserId = null;
 
   localStorage.removeItem(
     OFFLINE_SESSION_KEY,
   );
 
-  await new Promise<void>(
-    (resolve) => {
-      const request =
-        indexedDB.deleteDatabase(
-          DB_NAME,
+  if (!userId) {
+    return;
+  }
+
+  try {
+    const db =
+      await openDatabase();
+
+    const transaction =
+      db.transaction(
+        RESPONSE_STORE,
+        "readwrite",
+      );
+
+    const store =
+      transaction.objectStore(
+        RESPONSE_STORE,
+      );
+
+    const items =
+      await requestResult<
+        CachedResponse[]
+      >(
+        store.getAll(),
+      );
+
+    for (const item of items) {
+      if (
+        item.userId ===
+        userId
+      ) {
+        store.delete(
+          item.key,
         );
+      }
+    }
 
-      request.onsuccess =
-        () => {
-          resolve();
-        };
+    await transactionDone(
+      transaction,
+    );
 
-      request.onerror =
-        () => {
-          resolve();
-        };
-
-      request.onblocked =
-        () => {
-          resolve();
-        };
-    },
-  );
+    db.close();
+  } catch {
+    // Выход из системы не должен ломаться из-за IndexedDB.
+  }
 }

@@ -3,6 +3,7 @@ import {
   CloudOff,
   RefreshCw,
 } from "lucide-react";
+
 import {
   useCallback,
   useEffect,
@@ -13,15 +14,28 @@ import {
   registerSyncDevice,
 } from "../api/sync";
 
+import {
+  emitServerState,
+  getPendingSyncCount,
+} from "../offline/offlineStore";
+
 import type {
   NetworkStateDetail,
+  SyncQueueStateDetail,
 } from "../offline/offlineStore";
+
+import {
+  flushSyncQueue,
+} from "../sync/syncQueue";
 
 
 type SyncState =
   | "checking"
   | "online"
   | "offline";
+
+
+const AUTO_CHECK_MS = 8000;
 
 
 export function SyncStatusBadge() {
@@ -41,9 +55,31 @@ export function SyncStatusBadge() {
   ] = useState(false);
 
 
-  const check =
+  const [
+    pendingCount,
+    setPendingCount,
+  ] = useState(0);
+
+
+  const refreshPending =
     useCallback(
       async () => {
+        const count =
+          await getPendingSyncCount();
+
+        setPendingCount(
+          count,
+        );
+      },
+      [],
+    );
+
+
+  const check =
+    useCallback(
+      async (
+        showBusy = false,
+      ) => {
         if (
           !navigator.onLine
         ) {
@@ -51,47 +87,97 @@ export function SyncStatusBadge() {
             "offline",
           );
 
+          emitServerState(
+            false,
+          );
+
+          await refreshPending();
+
           return;
         }
 
-        setBusy(true);
+
+        if (showBusy) {
+          setBusy(true);
+        }
+
 
         try {
           await registerSyncDevice();
 
+          const result =
+            await flushSyncQueue();
+
+          setPendingCount(
+            result.pending,
+          );
+
           setState(
             "online",
+          );
+
+          emitServerState(
+            true,
           );
         } catch {
           setState(
             "offline",
           );
+
+          emitServerState(
+            false,
+          );
+
+          await refreshPending();
         } finally {
-          setBusy(false);
+          if (showBusy) {
+            setBusy(false);
+          }
         }
       },
-      [],
+      [
+        refreshPending,
+      ],
     );
 
 
   useEffect(() => {
-    const timer =
+    const firstCheck =
       window.setTimeout(
         () => {
-          void check();
+          void refreshPending();
+          void check(false);
         },
         0,
       );
 
+
+    const interval =
+      window.setInterval(
+        () => {
+          void check(false);
+        },
+        AUTO_CHECK_MS,
+      );
+
+
     function browserOnline() {
-      void check();
+      void check(true);
     }
+
 
     function browserOffline() {
       setState(
         "offline",
       );
+
+      emitServerState(
+        false,
+      );
+
+      void refreshPending();
     }
+
 
     function serverState(
       event: Event,
@@ -109,6 +195,22 @@ export function SyncStatusBadge() {
       );
     }
 
+
+    function queueState(
+      event: Event,
+    ) {
+      const custom =
+        event as
+          CustomEvent<
+            SyncQueueStateDetail
+          >;
+
+      setPendingCount(
+        custom.detail.pending,
+      );
+    }
+
+
     window.addEventListener(
       "online",
       browserOnline,
@@ -124,9 +226,19 @@ export function SyncStatusBadge() {
       serverState,
     );
 
+    window.addEventListener(
+      "cut-sync-queue-state",
+      queueState,
+    );
+
+
     return () => {
       window.clearTimeout(
-        timer,
+        firstCheck,
+      );
+
+      window.clearInterval(
+        interval,
       );
 
       window.removeEventListener(
@@ -143,8 +255,43 @@ export function SyncStatusBadge() {
         "cut-server-state",
         serverState,
       );
+
+      window.removeEventListener(
+        "cut-sync-queue-state",
+        queueState,
+      );
     };
-  }, [check]);
+  }, [
+    check,
+    refreshPending,
+  ]);
+
+
+  let label:
+    string;
+
+
+  if (
+    busy ||
+    state === "checking"
+  ) {
+    label =
+      pendingCount > 0
+        ? `Синхронизация · ожидают: ${pendingCount}`
+        : "Проверяем связь...";
+  } else if (
+    state === "online"
+  ) {
+    label =
+      pendingCount > 0
+        ? `Онлайн · ожидают: ${pendingCount}`
+        : "Онлайн · устройство подключено";
+  } else {
+    label =
+      pendingCount > 0
+        ? `Офлайн · ожидают: ${pendingCount}`
+        : "Офлайн · сохранённые данные";
+  }
 
 
   return (
@@ -154,9 +301,9 @@ export function SyncStatusBadge() {
       }
       disabled={busy}
       onClick={() => {
-        void check();
+        void check(true);
       }}
-      title="Проверить соединение"
+      title="Проверить соединение и синхронизацию"
       type="button"
     >
       {busy ||
@@ -174,12 +321,7 @@ export function SyncStatusBadge() {
       )}
 
       <span>
-        {busy ||
-        state === "checking"
-          ? "Проверяем связь..."
-          : state === "online"
-            ? "Онлайн · устройство подключено"
-            : "Офлайн · сохранённые данные"}
+        {label}
       </span>
     </button>
   );
